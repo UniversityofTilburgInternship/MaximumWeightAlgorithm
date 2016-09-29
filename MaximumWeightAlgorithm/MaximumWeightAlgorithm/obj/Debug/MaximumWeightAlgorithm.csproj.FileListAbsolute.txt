@@ -1,0 +1,5 @@
+C:\Users\ceesj\Documents\Stage\Progetto coccosimeoni\ScaffoldingProject\C_Sharp_Version\MaximumWeightAlgorithm\MaximumWeightAlgorithm\bin\Debug\MaximumWeightAlgorithm.exe
+C:\Users\ceesj\Documents\Stage\Progetto coccosimeoni\ScaffoldingProject\C_Sharp_Version\MaximumWeightAlgorithm\MaximumWeightAlgorithm\bin\Debug\MaximumWeightAlgorithm.pdb
+C:\Users\ceesj\Documents\Stage\Progetto coccosimeoni\ScaffoldingProject\C_Sharp_Version\MaximumWeightAlgorithm\MaximumWeightAlgorithm\obj\Debug\MaximumWeightAlgorithm.csprojResolveAssemblyReference.cache
+C:\Users\ceesj\Documents\Stage\Progetto coccosimeoni\ScaffoldingProject\C_Sharp_Version\MaximumWeightAlgorithm\MaximumWeightAlgorithm\obj\Debug\MaximumWeightAlgorithm.exe
+C:\Users\ceesj\Documents\Stage\Progetto coccosimeoni\ScaffoldingProject\C_Sharp_Version\MaximumWeightAlgorithm\MaximumWeightAlgorithm\obj\Debug\MaximumWeightAlgorithm.pdb
