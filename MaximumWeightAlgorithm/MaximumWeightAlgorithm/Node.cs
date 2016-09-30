@@ -1,15 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Serialization.Formatters;
-using System.Security.Cryptography;
 
 namespace MaximumWeightAlgorithm
 {
     public class Node
     {
-        string Name;
-        List<Edge> Edges = new List<Edge>();
-        List<Node> Neighbours;
+        string _name;
+        private List<Edge> _edges = new List<Edge>();
+        private List<Node> _neighbours;
         bool flag;
         Edge first;
         Edge second;
@@ -19,15 +17,15 @@ namespace MaximumWeightAlgorithm
         //Name(V_Name), flag(0), sum(0), first(NULL), second(NULL), isRepeated(false)
         public Node(string name)
         {
-            Name = name;
+            _name = name;
             flag = false;
             IsRepeated = false;
-            Neighbours = new List<Node>();
+            _neighbours = new List<Node>();
         }
 
         public void AddEdge(Edge edge)
         {
-            Edges.Add(edge);
+            _edges.Add(edge);
             var weight = edge.GetWeight();
             if (first == null || weight > first.GetWeight())
             {
@@ -38,18 +36,18 @@ namespace MaximumWeightAlgorithm
             {
                 second = edge;
             }
-            Neighbours.Add(edge.GetOther(this));
+            _neighbours.Add(edge.GetOther(this));
             _sum += weight;
         }
 
         public int GetEdgesSize()
         {
-            return Edges.Count;
+            return _edges.Count;
         }
 
         public string GetName()
         {
-            return Name;
+            return _name;
         }
 
         public int GetWeightSum()
@@ -69,23 +67,23 @@ namespace MaximumWeightAlgorithm
 
         public List<Edge> GetEdges()
         {
-            return Edges;
+            return _edges;
         }
 
         private Edge GetThirdEdge()
         {
-            if (Edges.Count < 3)
+            if (_edges.Count < 3)
                 return null;
-            Edge thirdEdge = Edges.First();
+            var thirdEdge = _edges.First();
             var index = 0;
-            while (Edges[index] == first || Edges[index] == second)
+            while (_edges[index] == first || _edges[index] == second)
                 index++;
 
-            thirdEdge = Edges[index];
+            thirdEdge = _edges[index];
 
-            for (int i = 0; i < Edges.Count; i++)
+            for (var i = 0; i < _edges.Count; i++)
             {
-                var edge = Edges[i];
+                var edge = _edges[i];
                 if (edge != first && edge != second && edge.GetWeight() > thirdEdge.GetWeight())
                     thirdEdge = edge;
             }
@@ -106,8 +104,8 @@ namespace MaximumWeightAlgorithm
                 second = GetThirdEdge();
             }
             var comparison = e.GetOther(this);
-            Edges.RemoveAll(x => x == e);
-            Neighbours.RemoveAll(x => x == comparison);
+            _edges.RemoveAll(x => x == e);
+            _neighbours.RemoveAll(x => x == comparison);
             _sum -= e.GetWeight();
         }
 
