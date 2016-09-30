@@ -1,5 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace MaximumWeightAlgorithm
 {
@@ -7,23 +7,15 @@ namespace MaximumWeightAlgorithm
     {
         static void Main(string[] args)
         {
-            Dictionary<string, string> filtered = new Dictionary<string, string>();
+            var lines = System.IO.File.ReadAllLines(@"C:\Lines.txt");
+            const char delimiter = ',';
+            var edges =
+                lines.Select(line => line.Split(delimiter)).Select(splitline =>
+                        new Edge(int.Parse(splitline[0]), int.Parse(splitline[1]), int.Parse(splitline[2]))).ToList();
 
-
-
-            string[] lines = System.IO.File.ReadAllLines(@"C:\Lines.txt");
-
-            char delimiter = ',';
-            foreach (var line in lines)
-            {
-                string[] splitline =  line.Split(delimiter);
-
-            }
-
-//            Console.ReadKey();
-
+            MaxWeightMatching.MaxWMatching(edges);
         }
+
+
     }
 }
-
-
