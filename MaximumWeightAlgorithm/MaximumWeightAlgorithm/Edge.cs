@@ -36,7 +36,7 @@ namespace MaximumWeightAlgorithm
         public override string ToString()
         {
             var result = "";
-            result += _elems[0] + "\t" + _elems[1] + "\t" + _elems[2] + "\n ";
+            result += _elems[0] + "\t" + _elems[1] + "\t" + _elems[2];
             return result;
         }
 

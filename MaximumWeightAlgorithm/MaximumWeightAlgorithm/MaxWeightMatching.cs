@@ -102,10 +102,12 @@ namespace MaximumWeightAlgorithm
             {
                 _unusedblossoms.Add(i);
             }
+
             for (var i = 0; i < _amountOfEdges; i++)
             {
                 _allowedge.Add(false);
             }
+
 
             for (var t = 0; t < _amountOfEdges; t++)
             {
@@ -131,20 +133,24 @@ namespace MaximumWeightAlgorithm
                 {
                     _allowedge[i] = false;
                 }
+
                 _queue = new MyList<int>();
+
                 for (var n = 0; n < _amountOfNodes; n++)
                 {
                     if (_mate[n] == -1 && _label[_inblossom[n]] == 0) AssignLabel(n, 1, -1);
                 }
+Console.WriteLine("queue size: " + _queue.Size() + "\n " + _queue.ToString());
                 var augmented = false;
                 while (true)
                 {
-                    while (_queue.Count > 0 && !augmented)
+                    while (_queue.Size() > 0 && !augmented)
                     {
-                        var n = _queue[_queue.Count - 1];
+                        var n = _queue[_queue.Size() - 1];
+                        Console.WriteLine(n);
                         _queue.RemoveLast();
 
-                        if (_label[_inblossom[n]] != -1) throw new Exception("Assert Error");
+                        if (_label[_inblossom[n]] != 1) throw new Exception("Assert Error");
 
                         for (var i = 0; i < _neightbend[n].Count; i++)
                         {

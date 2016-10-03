@@ -51,5 +51,16 @@ namespace MaximumWeightAlgorithm
         {
             return Enumerable.Repeat(default(T), capacity).ToList();
         }
+
+        public T this[int i]
+        {
+            get { return List[i]; }
+            set { List[i] = value; }
+        }
+
+        public override string ToString()
+        {
+            return List.Aggregate("", (current, variable) => current + (variable + "\t"));
+        }
     }
 }

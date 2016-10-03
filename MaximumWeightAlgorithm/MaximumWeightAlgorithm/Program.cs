@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace MaximumWeightAlgorithm
 {
@@ -12,9 +14,19 @@ namespace MaximumWeightAlgorithm
                 lines.Select(line => line.Split(delimiter)).Select(splitline =>
                         new Edge(int.Parse(splitline[0]), int.Parse(splitline[1]), int.Parse(splitline[2]))).ToList();
 
-            MaxWeightMatching.MaxWMatching(edges);
+            foreach (var VARIABLE in edges)
+            {
+                Console.WriteLine(VARIABLE);
+            }
+            var mates = MaxWeightMatching.MaxWMatching(edges);
+
+
+            Console.WriteLine("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&");
+            foreach (var VARIABLE in mates)
+            {
+                Console.WriteLine(VARIABLE);
+            }
+
         }
-
-
     }
 }
