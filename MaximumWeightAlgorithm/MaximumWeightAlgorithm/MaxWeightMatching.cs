@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
-using System.Linq.Expressions;
 
 namespace MaximumWeightAlgorithm
 {
@@ -18,16 +16,18 @@ namespace MaximumWeightAlgorithm
         private static MyList<int> _label = new MyList<int>();
         private static MyList<int> _labelend = new MyList<int>();
         private static MyList<int> _inblossom = new MyList<int>();
-        private static MyList<int> _blossomparent  = new MyList<int>();
+        private static MyList<int> _blossomparent = new MyList<int>();
         private static MyList<MyList<int>> _blossomchilds = new MyList<MyList<int>>();
         private static MyList<int> _blossombase = new MyList<int>();
         private static MyList<MyList<int>> _blossomdps = new MyList<MyList<int>>();
         private static MyList<int> _bestedge = new MyList<int>();
         private static MyList<MyList<int>> _blossombestedges = new MyList<MyList<int>>();
         private static MyList<int> _unusedblossoms = new MyList<int>();
-        private static MyList<int> _dualvar =  new MyList<int>();
+        private static MyList<int> _dualvar = new MyList<int>();
         private static MyList<bool> _allowedge = new MyList<bool>();
         private static MyList<int> _queue = new MyList<int>();
+        private static bool CHECK_DELTA = false;
+        private static bool CHECK_OPTIMUM = true;
 
         public static List<int> MaxWMatching(List<Edge> edges)
         {
@@ -127,12 +127,12 @@ namespace MaximumWeightAlgorithm
                 {
                     _blossombestedges[i] = new MyList<int>();
                 }
-                for (int i = 0; i < _amountOfEdges; i++)
+                for (var i = 0; i < _amountOfEdges; i++)
                 {
                     _allowedge[i] = false;
                 }
                 _queue = new MyList<int>();
-                for (int n = 0; n < _amountOfNodes; n++)
+                for (var n = 0; n < _amountOfNodes; n++)
                 {
                     if (_mate[n] == -1 && _label[_inblossom[n]] == 0) AssignLabel(n, 1, -1);
                 }
@@ -151,7 +151,7 @@ namespace MaximumWeightAlgorithm
                             var p = _neightbend[n][i];
                             var k = DivideAndFloor(p, 2);
                             var w = _endpoint[p];
-                            int kslack;
+                            var kslack = 0;
 
                             if (_inblossom[n] == _inblossom[w])
                                 continue;
@@ -167,9 +167,7 @@ namespace MaximumWeightAlgorithm
                                     AssignLabel(w, 2, p ^ 1);
                                 else if (_label[_inblossom[w]] == 1)
                                 {
-                                    //TODO 849
-
-                                    int Base = ScanBlossom(n, w);
+                                    var Base = ScanBlossom(n, w);
                                     if (Base >= 0)
                                         AddBlossom(Base, k);
                                     else
@@ -201,23 +199,23 @@ namespace MaximumWeightAlgorithm
                     }
                     if (augmented)
                         break;
-                    int deltatype = -1;
-                    int delta, deltaEdge, deltaBlossom;
+                    var deltatype = -1;
+                    int deltaEdge = 0, deltaBlossom = 0;
 
                     //TODO CHEKDATA
 
                     deltatype = 1;
-                    int min = _dualvar[0];
-                    for (int i = 0; i < _amountOfNodes; i++)
+                    var min = _dualvar[0];
+                    for (var i = 0; i < _amountOfNodes; i++)
                     {
                         min = Math.Min(min, _dualvar[i]);
                     }
-                    delta = min;
-                    for (int n = 0; n < _amountOfNodes; n++)
+                    var delta = min;
+                    for (var n = 0; n < _amountOfNodes; n++)
                     {
                         if (_label[_inblossom[n]] == 0 && _bestedge[n] != -1)
                         {
-                            int d = Slack(_bestedge[n]);
+                            var d = Slack(_bestedge[n]);
                             if (deltatype == -1 || d < delta)
                             {
                                 delta = d;
@@ -226,21 +224,21 @@ namespace MaximumWeightAlgorithm
                             }
                         }
                     }
-                    for (int b = 0; b < 2 * _amountOfNodes; b++)
+                    for (var b = 0; b < 2 * _amountOfNodes; b++)
                     {
                         if (_blossomparent[b] == -1 && _label[b] == 1 && _bestedge[b] != -1)
                         {
-                            int kslack = Slack(_bestedge[b]);
-                            int d = DivideAndFloor(kslack, 2);
+                            var kslack = Slack(_bestedge[b]);
+                            var d = DivideAndFloor(kslack, 2);
                             if (deltatype == -1 || d < delta)
                             {
                                 delta = d;
                                 deltatype = 3;
-                                deltaEdge= _bestedge[b];
+                                deltaEdge = _bestedge[b];
                             }
                         }
                     }
-                    for (int b = 0; b < _amountOfNodes; b++)
+                    for (var b = 0; b < _amountOfNodes; b++)
                     {
                         if (_blossombase[b] >= 0 && _blossomparent[b] == -1 && _label[b] == 2 &&
                             (deltatype == -1 || _dualvar[b] < delta))
@@ -254,20 +252,20 @@ namespace MaximumWeightAlgorithm
                     {
                         deltatype = 1;
                         min = _dualvar[0];
-                        for (int i = 0; i < _amountOfNodes; i++)
+                        for (var i = 0; i < _amountOfNodes; i++)
                         {
                             min = Math.Min(min, _dualvar[i]);
                         }
                         delta = Math.Max(min, 0);
                     }
-                    for (int n = 0; n < _amountOfNodes; n++)
+                    for (var n = 0; n < _amountOfNodes; n++)
                     {
                         if (_label[_inblossom[n]] == 1)
                             _dualvar[n] -= delta;
                         else if (_label[_inblossom[n]] == 2)
                             _dualvar[n] += delta;
                     }
-                    for (int b = _amountOfNodes; b < 2 * _amountOfNodes; b++)
+                    for (var b = _amountOfNodes; b < 2 * _amountOfNodes; b++)
                     {
                         if (_blossombase[b] >= 0 && _blossomparent[b] == -1)
                         {
@@ -277,18 +275,18 @@ namespace MaximumWeightAlgorithm
                                 _dualvar[b] -= delta;
                         }
                     }
-                    if(deltatype == 1)
+                    if (deltatype == 1)
                         break;
                     if (deltatype == 2)
                     {
                         _allowedge[deltaEdge] = true;
-                        int i = _myEdges[deltaEdge][0];
-                        int j = _myEdges[deltaEdge][1];
-                        int wt = _myEdges[deltaEdge][2];
+                        var i = _myEdges[deltaEdge][0];
+                        var j = _myEdges[deltaEdge][1];
+                        var wt = _myEdges[deltaEdge][2];
 
                         if (_label[_inblossom[i]] == 0)
                         {
-                            int tmp = i;
+                            var tmp = i;
                             i = j;
                             j = tmp;
                         }
@@ -298,34 +296,33 @@ namespace MaximumWeightAlgorithm
                     else if (deltatype == 3)
                     {
                         _allowedge[deltaEdge] = true;
-                        int i = _myEdges[deltaEdge][0];
-                        int j = _myEdges[deltaEdge][1];
-                        int wt = _myEdges[deltaEdge][2];
+                        var i = _myEdges[deltaEdge][0];
+                        var j = _myEdges[deltaEdge][1];
+                        var wt = _myEdges[deltaEdge][2];
                         if (_label[_inblossom[i]] != 1) throw new Exception("Assert error 304");
                         _queue.RemoveLast();
                     }
                     else if (deltatype == 4)
-                     ExpandBlossom(deltaBlossom, false);
+                        ExpandBlossom(deltaBlossom, false);
                 }
                 if (!augmented)
                     break;
-                for (int b = _amountOfNodes; b < 2 * _amountOfNodes; b++)
+                for (var b = _amountOfNodes; b < 2 * _amountOfNodes; b++)
                 {
-                    if(_blossomparent[b] == -1 && _blossombase[b] >= 0  && _label[b] == 1 && _dualvar[b] == 0)
-                        ExpandBlossom(b ,true);
+                    if (_blossomparent[b] == -1 && _blossombase[b] >= 0 && _label[b] == 1 && _dualvar[b] == 0)
+                        ExpandBlossom(b, true);
                 }
             }
             //TODO CHECKOPTUMIM
 
-            for (int n = 0; n < _amountOfNodes; n++)
+            for (var n = 0; n < _amountOfNodes; n++)
             {
                 if (_mate[n] >= 0)
                     _mate[n] = _endpoint[_mate[n]];
             }
-            for (int n = 0; n < _amountOfNodes; n++)
+            for (var n = 0; n < _amountOfNodes; n++)
             {
-                if(!(_mate[n] == -1 || _mate[_mate[n]] == n)) throw new Exception("Asser error");
-
+                if (!(_mate[n] == -1 || _mate[_mate[n]] == n)) throw new Exception("Asser error");
             }
             return _mate.ToList();
         }
@@ -431,7 +428,7 @@ namespace MaximumWeightAlgorithm
             while (v != -1 || w != -1)
             {
                 var b = _inblossom[v];
-                //TODO fix this if if (_label[b] & 4 )
+                if (Convert.ToBoolean(_label[b] & 4))
                 {
                     Base = _blossombase[b];
                     break;
@@ -533,10 +530,10 @@ namespace MaximumWeightAlgorithm
             var vs = BlossomLeaves(b);
             for (var vi = 0; vi < vs.Size(); vi++)
             {
-                var Vv = vs[vi];
-                if (_label[_inblossom[Vv]] == 2)
-                    _queue.Add(Vv);
-                _inblossom[Vv] = b;
+                var vv = vs[vi];
+                if (_label[_inblossom[vv]] == 2)
+                    _queue.Add(vv);
+                _inblossom[vv] = b;
             }
 
 
@@ -665,7 +662,7 @@ namespace MaximumWeightAlgorithm
                 var p = ps[i];
                 while (true)
                 {
-                    int bs = _inblossom[s];
+                    var bs = _inblossom[s];
                     if (_label[bs] != 1) throw new Exception("Assert Error");
                     if (_labelend[bs] != _mate[_blossombase[bs]]) throw new Exception("Assert Error");
 
@@ -704,7 +701,7 @@ namespace MaximumWeightAlgorithm
             int jstep, endptrick;
             var i = IndexOf(_blossomchilds[b], t);
             var j = i;
-            if (i & 1)
+            if (Convert.ToBoolean(i & 1))
             {
                 j -= _blossomchilds[b].Size();
                 jstep = 1;
@@ -756,34 +753,35 @@ namespace MaximumWeightAlgorithm
 
         private static void ExpandBlossom(int b, bool endstage)
         {
-            for(var i = 0; i < _blossomchilds[b].Size(); i++)
+            for (var i = 0; i < _blossomchilds[b].Size(); i++)
             {
                 var s = _blossomchilds[b][i];
                 _blossomparent[s] = -1;
-                if(s < _amountOfNodes && _dualvar[s] == 0)
+                if (s < _amountOfNodes && _dualvar[s] == 0)
                 {
                     ExpandBlossom(s, endstage);
                 }
                 else
                 {
                     var vs = BlossomLeaves(s);
-                    for(var j = 0; j < vs.Size(); j++)
+                    for (var j = 0; j < vs.Size(); j++)
                     {
                         var v = vs[j];
                         _inblossom[v] = s;
                     }
                 }
             }
-            if(!endstage && _label[b] == 2)
+            if (!endstage && _label[b] == 2)
             {
-                if(_labelend[b] < 0) throw new Exception("Assert Error");
+                if (_labelend[b] < 0) throw new Exception("Assert Error");
 
-                int entrychild = _inblossom[_endpoint[_labelend[b] ^ 1]];
-                int j = IndexOf(_blossomchilds[b], entrychild);
+                var entrychild = _inblossom[_endpoint[_labelend[b] ^ 1]];
+                var j = IndexOf(_blossomchilds[b], entrychild);
                 int jstep, endptrick;
-                if(j & 1)
+                if (Convert.ToBoolean(j & 1))
                 {
-                    j -= _blossomchilds[b].Size();;
+                    j -= _blossomchilds[b].Size();
+                    ;
                     jstep = 1;
                     endptrick = 0;
                 }
@@ -793,43 +791,43 @@ namespace MaximumWeightAlgorithm
                     endptrick = 1;
                 }
                 var p = _labelend[b];
-                while(j != 0)
+                while (j != 0)
                 {
                     _label[_endpoint[p ^ 1]] = 0;
-                    _label[_endpoint[_blossomdps[b][j-endptrick]^endptrick]]=0;
+                    _label[_endpoint[_blossomdps[b][j - endptrick] ^ endptrick]] = 0;
                     AssignLabel(_endpoint[p ^ 1], 2, p);
-                    _allowedge[DivideAndFloor(_blossomdps[b][j - endptrick],2)] = true; // row 391
+                    _allowedge[DivideAndFloor(_blossomdps[b][j - endptrick], 2)] = true; // row 391
                     j += jstep;
-                    p = _blossomdps[b][j-endptrick] ^ endptrick;
-                    _allowedge[DivideAndFloor(p,2)] = true; // row 395
+                    p = _blossomdps[b][j - endptrick] ^ endptrick;
+                    _allowedge[DivideAndFloor(p, 2)] = true; // row 395
                     j += jstep;
                 }
                 var bv = _blossomchilds[b][j];
-                _label[_endpoint[p^1]] = 2;
+                _label[_endpoint[p ^ 1]] = 2;
                 _label[bv] = 2;
-                _labelend[_endpoint[p^1]] = p;
+                _labelend[_endpoint[p ^ 1]] = p;
                 _labelend[bv] = p;
                 _bestedge[bv] = -1;
                 j += jstep;
-                while(_blossomchilds[b][j] != entrychild)
+                while (_blossomchilds[b][j] != entrychild)
                 {
                     bv = _blossomchilds[b][j];
-                    if(_label[bv] == 1)
+                    if (_label[bv] == 1)
                     {
                         j += jstep;
                         continue;
                     }
                     var vs = BlossomLeaves(bv);
                     var v = 0;
-                    for(var i = 0; i < vs.Size(); i++)
+                    for (var i = 0; i < vs.Size(); i++)
                     {
                         v = vs[i];
                         if (_label[v] != 0) break;
                     }
-                    if(_label[v ] != 0)
+                    if (_label[v] != 0)
                     {
-                        if(_label[v] != 2) throw new Exception("Assert Error");
-                        if(_inblossom[v] != bv) throw new  Exception("Assert Error");
+                        if (_label[v] != 2) throw new Exception("Assert Error");
+                        if (_inblossom[v] != bv) throw new Exception("Assert Error");
                         _label[v] = 0;
                         _label[_endpoint[_mate[_blossombase[bv]]]] = 0;
                         AssignLabel(v, 2, _labelend[v]);
