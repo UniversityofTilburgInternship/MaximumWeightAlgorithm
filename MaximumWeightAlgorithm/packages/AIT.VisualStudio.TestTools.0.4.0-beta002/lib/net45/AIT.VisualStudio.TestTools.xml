@@ -1,0 +1,337 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>AIT.VisualStudio.TestTools</name>
+    </assembly>
+    <members>
+        <member name="T:AIT.VisualStudio.TestTools.Common.TimeTaker">
+            <summary>
+            Takes the time which a test needs
+            </summary>
+        </member>
+        <member name="M:AIT.VisualStudio.TestTools.Common.TimeTaker.#ctor(System.TimeSpan,System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:AIT.VisualStudio.TestTools.Common.TimeTaker" /> class.
+            </summary>
+            <param name="expectedMaximumExecutionTime">The expected maximum execution time.</param>
+            <param name="caller">The caller.</param>
+        </member>
+        <member name="M:AIT.VisualStudio.TestTools.Common.TimeTaker.Begin(System.TimeSpan,System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:AIT.VisualStudio.TestTools.Common.TimeTaker" /> class and starts tracking the time.
+            </summary>
+        </member>
+        <member name="P:AIT.VisualStudio.TestTools.Common.TimeTaker.ElapsedTime">
+            <summary>
+            Gets the elapsed time.
+            </summary>
+        </member>
+        <member name="M:AIT.VisualStudio.TestTools.Common.TimeTaker.Dispose">
+            <summary>
+            Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+            </summary>
+        </member>
+        <member name="M:AIT.VisualStudio.TestTools.Common.TimeTaker.End(System.String)">
+            <summary>
+            Ends the current execution time tracking and throws an exception if applicable
+            </summary>
+            <param name="message">the message for the exception or the trace message.</param>
+        </member>
+        <member name="M:AIT.VisualStudio.TestTools.Common.TimeTaker.Dispose(System.Boolean)">
+            <summary>
+            Releases unmanaged and - optionally - managed resources.
+            </summary>
+            <param name="disposing">
+            <c>true</c> to release both managed and unmanaged resources; <c>false</c> to release only unmanaged resources.
+            </param>
+        </member>
+        <member name="T:AIT.VisualStudio.TestTools.Traits.AreaAttribute">
+            <summary>
+            Test Attribute to comment to link to an Area
+            </summary>
+        </member>
+        <member name="M:AIT.VisualStudio.TestTools.Traits.AreaAttribute.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Microsoft.VisualStudio.TestTools.UnitTesting.TestCategoryAttribute" />
+            class
+            by applying the supplied category to the test.
+            </summary>
+            <param name="area">The area to be applied.</param>
+        </member>
+        <member name="P:AIT.VisualStudio.TestTools.Traits.AreaAttribute.Area">
+            <summary>
+            Gets the area to be applied.
+            </summary>
+        </member>
+        <member name="P:AIT.VisualStudio.TestTools.Traits.AreaAttribute.TestCategories">
+            <summary>
+            Gets the test categories that have been applied to the test.
+            </summary>
+        </member>
+        <member name="T:AIT.VisualStudio.TestTools.Traits.SystemTestAttribute">
+            <summary>
+            Integration Test Attribute
+            </summary>
+        </member>
+        <member name="M:AIT.VisualStudio.TestTools.Traits.SystemTestAttribute.#ctor(AIT.VisualStudio.TestTools.Traits.ExpectedExecutionTime)">
+            <summary>
+            Creates a new instance of the <see cref="T:AIT.VisualStudio.TestTools.Traits.SystemTestAttribute" /> class.
+            </summary>
+            <param name="expectedExecutionTime">Expected execution time</param>
+        </member>
+        <member name="M:AIT.VisualStudio.TestTools.Traits.SystemTestAttribute.#ctor(AIT.VisualStudio.TestTools.Traits.ExecutionMode)">
+            <summary>
+            Creates a new instance of the <see cref="T:AIT.VisualStudio.TestTools.Traits.SystemTestAttribute" /> class.
+            </summary>
+            <param name="executionMode">Execution mode</param>
+        </member>
+        <member name="M:AIT.VisualStudio.TestTools.Traits.SystemTestAttribute.#ctor(AIT.VisualStudio.TestTools.Traits.ExpectedExecutionTime,AIT.VisualStudio.TestTools.Traits.ExecutionMode)">
+            <summary>
+            Creates a new instance of the <see cref="T:AIT.VisualStudio.TestTools.Traits.SystemTestAttribute" /> class.
+            </summary>
+            <param name="expectedExecutionTime">Expected execution time</param>
+            <param name="executionMode">Execution mode</param>
+        </member>
+        <member name="M:AIT.VisualStudio.TestTools.Traits.SystemTestAttribute.#ctor">
+            <summary>
+            Creates a new instance of the <see cref="T:AIT.VisualStudio.TestTools.Traits.SystemTestAttribute" /> class.
+            </summary>
+        </member>
+        <member name="P:AIT.VisualStudio.TestTools.Traits.SystemTestAttribute.TestType">
+            <summary>
+            Gets the test type
+            </summary>
+        </member>
+        <member name="T:AIT.VisualStudio.TestTools.Traits.PerformanceTestAttribute">
+            <summary>
+            Performance test attribute
+            </summary>
+        </member>
+        <member name="M:AIT.VisualStudio.TestTools.Traits.PerformanceTestAttribute.#ctor(AIT.VisualStudio.TestTools.Traits.ExecutionMode)">
+            <summary>
+            Creates a new instance of the <see cref="T:AIT.VisualStudio.TestTools.Traits.PerformanceTestAttribute" /> class.
+            </summary>
+            <param name="executionMode">Execution mode</param>
+        </member>
+        <member name="M:AIT.VisualStudio.TestTools.Traits.PerformanceTestAttribute.#ctor">
+            <summary>
+            Creates a new instance of the <see cref="T:AIT.VisualStudio.TestTools.Traits.PerformanceTestAttribute" /> class.
+            </summary>
+        </member>
+        <member name="P:AIT.VisualStudio.TestTools.Traits.PerformanceTestAttribute.ExpectedExecutionTime">
+            <summary>
+            Gets the expected execution time
+            </summary>
+        </member>
+        <member name="P:AIT.VisualStudio.TestTools.Traits.PerformanceTestAttribute.TestType">
+            <summary>
+            Gets the test type
+            </summary>
+        </member>
+        <member name="T:AIT.VisualStudio.TestTools.Traits.IntegrationTestAttribute">
+            <summary>
+            Integration Test Attribute
+            </summary>
+        </member>
+        <member name="M:AIT.VisualStudio.TestTools.Traits.IntegrationTestAttribute.#ctor(AIT.VisualStudio.TestTools.Traits.ExpectedExecutionTime)">
+            <summary>
+            Creates a new instance of the <see cref="T:AIT.VisualStudio.TestTools.Traits.IntegrationTestAttribute" /> class.
+            </summary>
+            <param name="expectedExecutionTime">Expected execution time</param>
+        </member>
+        <member name="M:AIT.VisualStudio.TestTools.Traits.IntegrationTestAttribute.#ctor(AIT.VisualStudio.TestTools.Traits.ExecutionMode)">
+            <summary>
+            Creates a new instance of the <see cref="T:AIT.VisualStudio.TestTools.Traits.IntegrationTestAttribute" /> class.
+            </summary>
+            <param name="executionMode">Execution mode</param>
+        </member>
+        <member name="M:AIT.VisualStudio.TestTools.Traits.IntegrationTestAttribute.#ctor(AIT.VisualStudio.TestTools.Traits.ExpectedExecutionTime,AIT.VisualStudio.TestTools.Traits.ExecutionMode)">
+            <summary>
+            Creates a new instance of the <see cref="T:AIT.VisualStudio.TestTools.Traits.IntegrationTestAttribute" /> class.
+            </summary>
+            <param name="expectedExecutionTime">Expected execution time</param>
+            <param name="executionMode">Execution mode</param>
+        </member>
+        <member name="M:AIT.VisualStudio.TestTools.Traits.IntegrationTestAttribute.#ctor">
+            <summary>
+            Creates a new instance of the <see cref="T:AIT.VisualStudio.TestTools.Traits.IntegrationTestAttribute" /> class.
+            </summary>
+        </member>
+        <member name="P:AIT.VisualStudio.TestTools.Traits.IntegrationTestAttribute.TestType">
+            <summary>
+            Gets the test type
+            </summary>
+        </member>
+        <member name="T:AIT.VisualStudio.TestTools.Traits.Base.CustomTestAttribute">
+            <summary>
+            Custom test attributes base class.
+            </summary>
+        </member>
+        <member name="M:AIT.VisualStudio.TestTools.Traits.Base.CustomTestAttribute.#ctor">
+            <summary>
+            Creates a new instance of the <see cref="T:AIT.VisualStudio.TestTools.Traits.Base.CustomTestAttribute" /> class.
+            </summary>
+        </member>
+        <member name="M:AIT.VisualStudio.TestTools.Traits.Base.CustomTestAttribute.#ctor(AIT.VisualStudio.TestTools.Traits.ExpectedExecutionTime)">
+            <summary>
+            Creates a new instance of the <see cref="T:AIT.VisualStudio.TestTools.Traits.Base.CustomTestAttribute" /> class.
+            </summary>
+            <param name="expectedExecutionTime">Expected execution time</param>
+        </member>
+        <member name="M:AIT.VisualStudio.TestTools.Traits.Base.CustomTestAttribute.#ctor(AIT.VisualStudio.TestTools.Traits.ExecutionMode)">
+            <summary>
+            Creates a new instance of the <see cref="T:AIT.VisualStudio.TestTools.Traits.Base.CustomTestAttribute" /> class.
+            </summary>
+            <param name="executionMode">Execution mode</param>
+        </member>
+        <member name="M:AIT.VisualStudio.TestTools.Traits.Base.CustomTestAttribute.#ctor(AIT.VisualStudio.TestTools.Traits.ExpectedExecutionTime,AIT.VisualStudio.TestTools.Traits.ExecutionMode)">
+            <summary>
+            Creates a new instance of the <see cref="T:AIT.VisualStudio.TestTools.Traits.Base.CustomTestAttribute" /> class.
+            </summary>
+            <param name="expectedExecutionTime">Expected execution time</param>
+            <param name="executionMode">Execution mode</param>
+        </member>
+        <member name="P:AIT.VisualStudio.TestTools.Traits.Base.CustomTestAttribute.ExpectedExecutionTime">
+            <summary>
+            Gets the expected execution time
+            </summary>
+        </member>
+        <member name="P:AIT.VisualStudio.TestTools.Traits.Base.CustomTestAttribute.ExecutionMode">
+            <summary>
+            Gets the execution mode
+            </summary>
+        </member>
+        <member name="P:AIT.VisualStudio.TestTools.Traits.Base.CustomTestAttribute.TestType">
+            <summary>
+            Gets the test type
+            </summary>
+        </member>
+        <member name="P:AIT.VisualStudio.TestTools.Traits.Base.CustomTestAttribute.Distributed">
+            <summary>
+            Gets a value indicating whether this <see cref="T:AIT.VisualStudio.TestTools.Traits.Base.CustomTestAttribute" /> is distributed.
+            </summary>
+        </member>
+        <member name="P:AIT.VisualStudio.TestTools.Traits.Base.CustomTestAttribute.TestCategories">
+            <summary>
+            Gets the test categories
+            </summary>
+        </member>
+        <member name="T:AIT.VisualStudio.TestTools.Traits.CodedUiTestCategoryAttribute">
+            <summary>
+            Integration Test Attribute
+            </summary>
+        </member>
+        <member name="M:AIT.VisualStudio.TestTools.Traits.CodedUiTestCategoryAttribute.#ctor(AIT.VisualStudio.TestTools.Traits.ExpectedExecutionTime)">
+            <summary>
+            Creates a new instance of the <see cref="T:AIT.VisualStudio.TestTools.Traits.CodedUiTestCategoryAttribute" /> class.
+            </summary>
+            <param name="expectedExecutionTime">Expected execution time</param>
+        </member>
+        <member name="M:AIT.VisualStudio.TestTools.Traits.CodedUiTestCategoryAttribute.#ctor(AIT.VisualStudio.TestTools.Traits.ExecutionMode)">
+            <summary>
+            Creates a new instance of the <see cref="T:AIT.VisualStudio.TestTools.Traits.CodedUiTestCategoryAttribute" /> class.
+            </summary>
+            <param name="executionMode">Execution mode</param>
+        </member>
+        <member name="M:AIT.VisualStudio.TestTools.Traits.CodedUiTestCategoryAttribute.#ctor(AIT.VisualStudio.TestTools.Traits.ExpectedExecutionTime,AIT.VisualStudio.TestTools.Traits.ExecutionMode)">
+            <summary>
+            Creates a new instance of the <see cref="T:AIT.VisualStudio.TestTools.Traits.CodedUiTestCategoryAttribute" /> class.
+            </summary>
+        </member>
+        <member name="M:AIT.VisualStudio.TestTools.Traits.CodedUiTestCategoryAttribute.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:AIT.VisualStudio.TestTools.Traits.CodedUiTestCategoryAttribute"/> class.
+            </summary>
+        </member>
+        <member name="P:AIT.VisualStudio.TestTools.Traits.CodedUiTestCategoryAttribute.TestType">
+            <summary>
+            Gets the test type
+            </summary>
+        </member>
+        <member name="T:AIT.VisualStudio.TestTools.Traits.ExecutionMode">
+            <summary>
+            Test Execution Mode
+            </summary>
+        </member>
+        <member name="F:AIT.VisualStudio.TestTools.Traits.ExecutionMode.Automated">
+            <summary>
+            Tests runs automatically
+            </summary>
+        </member>
+        <member name="F:AIT.VisualStudio.TestTools.Traits.ExecutionMode.Manual">
+            <summary>
+            Tests must get executed manually.
+            </summary>
+        </member>
+        <member name="F:AIT.VisualStudio.TestTools.Traits.ExecutionMode.CodedUI">
+            <summary>
+            Test must get executed using a test runner.
+            </summary>
+        </member>
+        <member name="T:AIT.VisualStudio.TestTools.Traits.ExpectedExecutionTime">
+            <summary>
+            Expected test execution time
+            </summary>
+        </member>
+        <member name="F:AIT.VisualStudio.TestTools.Traits.ExpectedExecutionTime.Milliseconds">
+            <summary>
+            It takes up to 50 milliseconds to execute the test.
+            </summary>
+        </member>
+        <member name="F:AIT.VisualStudio.TestTools.Traits.ExpectedExecutionTime.Seconds">
+            <summary>
+            It takes up to 30 seconds to execute the test.
+            </summary>
+        </member>
+        <member name="F:AIT.VisualStudio.TestTools.Traits.ExpectedExecutionTime.Minutes">
+            <summary>
+            It takes up to 20 minutes to execute the test.
+            </summary>
+        </member>
+        <member name="F:AIT.VisualStudio.TestTools.Traits.ExpectedExecutionTime.Hours">
+            <summary>
+            It takes up to 2 hours to execute the test.
+            </summary>
+        </member>
+        <member name="T:AIT.VisualStudio.TestTools.Traits.TestType">
+            <summary>
+            Test type
+            </summary>
+        </member>
+        <member name="F:AIT.VisualStudio.TestTools.Traits.TestType.Integration">
+            <summary>
+            Integration test type
+            </summary>
+        </member>
+        <member name="F:AIT.VisualStudio.TestTools.Traits.TestType.UnitTest">
+            <summary>
+            Unit Test type
+            </summary>
+        </member>
+        <member name="F:AIT.VisualStudio.TestTools.Traits.TestType.System">
+            <summary>
+            System test type
+            </summary>
+        </member>
+        <member name="F:AIT.VisualStudio.TestTools.Traits.TestType.CodedUI">
+            <summary>
+            User interface test
+            </summary>
+        </member>
+        <member name="F:AIT.VisualStudio.TestTools.Traits.TestType.Performance">
+            <summary>
+            Performance test type
+            </summary>
+        </member>
+        <member name="F:AIT.VisualStudio.TestTools.Traits.TestType.SystemPreparation">
+            <summary>
+            System Preparation test type
+            </summary>
+        </member>
+        <member name="F:AIT.VisualStudio.TestTools.Traits.TestType.SampleCode">
+            <summary>
+            Sample code test type
+            </summary>
+        </member>
+    </members>
+</doc>

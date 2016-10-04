@@ -3,3 +3,7 @@ C:\Users\ceesj\Documents\Stage\Progetto coccosimeoni\ScaffoldingProject\C_Sharp_
 C:\Users\ceesj\Documents\Stage\Progetto coccosimeoni\ScaffoldingProject\C_Sharp_Version\MaximumWeightAlgorithm\MaximumWeightAlgorithm\obj\Debug\MaximumWeightAlgorithm.csprojResolveAssemblyReference.cache
 C:\Users\ceesj\Documents\Stage\Progetto coccosimeoni\ScaffoldingProject\C_Sharp_Version\MaximumWeightAlgorithm\MaximumWeightAlgorithm\obj\Debug\MaximumWeightAlgorithm.exe
 C:\Users\ceesj\Documents\Stage\Progetto coccosimeoni\ScaffoldingProject\C_Sharp_Version\MaximumWeightAlgorithm\MaximumWeightAlgorithm\obj\Debug\MaximumWeightAlgorithm.pdb
+C:\Users\ceesj\Documents\Stage\Progetto coccosimeoni\ScaffoldingProject\C_Sharp_Version\MaximumWeightAlgorithm\MaximumWeightAlgorithm\bin\Debug\AIT.VisualStudio.TestTools.dll
+C:\Users\ceesj\Documents\Stage\Progetto coccosimeoni\ScaffoldingProject\C_Sharp_Version\MaximumWeightAlgorithm\MaximumWeightAlgorithm\bin\Debug\Microsoft.VisualStudio.QualityTools.UnitTestFramework.dll
+C:\Users\ceesj\Documents\Stage\Progetto coccosimeoni\ScaffoldingProject\C_Sharp_Version\MaximumWeightAlgorithm\MaximumWeightAlgorithm\bin\Debug\AIT.VisualStudio.TestTools.xml
+C:\Users\ceesj\Documents\Stage\Progetto coccosimeoni\ScaffoldingProject\C_Sharp_Version\MaximumWeightAlgorithm\MaximumWeightAlgorithm\bin\Debug\Microsoft.VisualStudio.QualityTools.UnitTestFramework.xml

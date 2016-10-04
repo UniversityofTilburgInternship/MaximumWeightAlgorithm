@@ -26,10 +26,8 @@ namespace MaximumWeightAlgorithm
         private static MyList<int> _dualvar = new MyList<int>();
         private static MyList<bool> _allowedge = new MyList<bool>();
         private static MyList<int> _queue = new MyList<int>();
-        private static bool CHECK_DELTA = false;
-        private static bool CHECK_OPTIMUM = true;
 
-        public static List<int> MaxWMatching(List<Edge> edges)
+        public static List<int> MaxWMatching(List<Edge> edges, bool maxCardinality = false)
         {
             // if edges is empty
             if (edges.Count <= 0)
@@ -81,7 +79,6 @@ namespace MaximumWeightAlgorithm
                 _inblossom.Add(i);
                 _blossombase.Add(i);
                 _bestedge.Add(-1);
-                _blossomdps.Add(new MyList<int>());
                 _dualvar.Add(_maxWeight);
             }
 
@@ -90,6 +87,7 @@ namespace MaximumWeightAlgorithm
                 _label.Add(0);
                 _labelend.Add(-1);
                 _blossomparent.Add(-1);
+                _blossomdps.Add(new MyList<int>());
                 _blossomchilds.Add(new MyList<int>());
                 _blossombestedges.Add(new MyList<int>());
             }
@@ -108,23 +106,21 @@ namespace MaximumWeightAlgorithm
                 _allowedge.Add(false);
             }
 
-
             for (var t = 0; t < _amountOfEdges; t++)
             {
                 var label1 = new MyList<int>(2 * _amountOfNodes);
-                for (var i = 0; i < label1.Count; i++)
+                for (var i = 0; i < label1.Size(); i++)
                 {
                     label1[i] = 0;
                 }
                 _label = label1;
 
                 var label2 = new MyList<int>(2 * _amountOfNodes);
-                for (var i = 0; i < label2.Count; i++)
+                for (var i = 0; i < label2.Size(); i++)
                 {
                     label2[i] = -1;
                 }
                 _bestedge = label2;
-
                 for (var i = _amountOfNodes; i < 2 * _amountOfNodes; i++)
                 {
                     _blossombestedges[i] = new MyList<int>();
@@ -140,16 +136,16 @@ namespace MaximumWeightAlgorithm
                 {
                     if (_mate[n] == -1 && _label[_inblossom[n]] == 0) AssignLabel(n, 1, -1);
                 }
-Console.WriteLine("queue size: " + _queue.Size() + "\n " + _queue.ToString());
                 var augmented = false;
+
                 while (true)
                 {
                     while (_queue.Size() > 0 && !augmented)
                     {
+                        Console.WriteLine("Queue: " + _queue);
                         var n = _queue[_queue.Size() - 1];
-                        Console.WriteLine(n);
                         _queue.RemoveLast();
-
+                        Console.WriteLine("n: " + n);
                         if (_label[_inblossom[n]] != 1) throw new Exception("Assert Error");
 
                         for (var i = 0; i < _neightbend[n].Count; i++)
@@ -174,6 +170,7 @@ Console.WriteLine("queue size: " + _queue.Size() + "\n " + _queue.ToString());
                                 else if (_label[_inblossom[w]] == 1)
                                 {
                                     var Base = ScanBlossom(n, w);
+                                    Console.WriteLine("Base: " + Base + "\tk: " + k);
                                     if (Base >= 0)
                                         AddBlossom(Base, k);
                                     else
@@ -209,7 +206,6 @@ Console.WriteLine("queue size: " + _queue.Size() + "\n " + _queue.ToString());
                     int deltaEdge = 0, deltaBlossom = 0;
 
                     //TODO CHEKDATA
-
                     deltatype = 1;
                     var min = _dualvar[0];
                     for (var i = 0; i < _amountOfNodes; i++)
@@ -217,6 +213,9 @@ Console.WriteLine("queue size: " + _queue.Size() + "\n " + _queue.ToString());
                         min = Math.Min(min, _dualvar[i]);
                     }
                     var delta = min;
+
+
+
                     for (var n = 0; n < _amountOfNodes; n++)
                     {
                         if (_label[_inblossom[n]] == 0 && _bestedge[n] != -1)
@@ -230,6 +229,7 @@ Console.WriteLine("queue size: " + _queue.Size() + "\n " + _queue.ToString());
                             }
                         }
                     }
+
                     for (var b = 0; b < 2 * _amountOfNodes; b++)
                     {
                         if (_blossomparent[b] == -1 && _label[b] == 1 && _bestedge[b] != -1)
@@ -244,7 +244,8 @@ Console.WriteLine("queue size: " + _queue.Size() + "\n " + _queue.ToString());
                             }
                         }
                     }
-                    for (var b = 0; b < _amountOfNodes; b++)
+
+                    for (var b = _amountOfNodes; b < 2 * _amountOfNodes; b++)
                     {
                         if (_blossombase[b] >= 0 && _blossomparent[b] == -1 && _label[b] == 2 &&
                             (deltatype == -1 || _dualvar[b] < delta))
@@ -254,6 +255,7 @@ Console.WriteLine("queue size: " + _queue.Size() + "\n " + _queue.ToString());
                             deltaBlossom = b;
                         }
                     }
+
                     if (deltatype == -1)
                     {
                         deltatype = 1;
@@ -264,6 +266,7 @@ Console.WriteLine("queue size: " + _queue.Size() + "\n " + _queue.ToString());
                         }
                         delta = Math.Max(min, 0);
                     }
+
                     for (var n = 0; n < _amountOfNodes; n++)
                     {
                         if (_label[_inblossom[n]] == 1)
@@ -281,15 +284,15 @@ Console.WriteLine("queue size: " + _queue.Size() + "\n " + _queue.ToString());
                                 _dualvar[b] -= delta;
                         }
                     }
+
                     if (deltatype == 1)
                         break;
-                    if (deltatype == 2)
+                    else if (deltatype == 2)
                     {
                         _allowedge[deltaEdge] = true;
                         var i = _myEdges[deltaEdge][0];
                         var j = _myEdges[deltaEdge][1];
                         var wt = _myEdges[deltaEdge][2];
-
                         if (_label[_inblossom[i]] == 0)
                         {
                             var tmp = i;
@@ -297,7 +300,7 @@ Console.WriteLine("queue size: " + _queue.Size() + "\n " + _queue.ToString());
                             j = tmp;
                         }
                         if (_label[_inblossom[i]] != 1) throw new Exception("Assert Error 295");
-                        _queue.RemoveLast();
+                        _queue.Add(i);
                     }
                     else if (deltatype == 3)
                     {
@@ -306,7 +309,7 @@ Console.WriteLine("queue size: " + _queue.Size() + "\n " + _queue.ToString());
                         var j = _myEdges[deltaEdge][1];
                         var wt = _myEdges[deltaEdge][2];
                         if (_label[_inblossom[i]] != 1) throw new Exception("Assert error 304");
-                        _queue.RemoveLast();
+                        _queue.Add(i);
                     }
                     else if (deltatype == 4)
                         ExpandBlossom(deltaBlossom, false);
@@ -319,7 +322,7 @@ Console.WriteLine("queue size: " + _queue.Size() + "\n " + _queue.ToString());
                         ExpandBlossom(b, true);
                 }
             }
-            //TODO CHECKOPTUMIM
+            VerifyOptimum();
 
             for (var n = 0; n < _amountOfNodes; n++)
             {
@@ -330,6 +333,9 @@ Console.WriteLine("queue size: " + _queue.Size() + "\n " + _queue.ToString());
             {
                 if (!(_mate[n] == -1 || _mate[_mate[n]] == n)) throw new Exception("Asser error");
             }
+            Console.WriteLine();
+            Console.WriteLine("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&");
+            Console.WriteLine();
             return _mate.ToList();
         }
 
@@ -481,13 +487,14 @@ Console.WriteLine("queue size: " + _queue.Size() + "\n " + _queue.ToString());
 
             var b = _unusedblossoms[_unusedblossoms.Size() - 1];
             _unusedblossoms.RemoveLast();
-
+            Console.WriteLine("AddBlossom Vars \nbase: " + Base + "\tk: " + k + "\tv: "
+                              + v + "\tw: " + w + "\tb: " + b);
             _blossombase[b] = Base;
             _blossomparent[b] = -1;
             _blossomparent[bb] = b;
 
             _blossomchilds[b] = new MyList<int>();
-
+            Console.WriteLine(_amountOfNodes + " : " + _blossomdps.Size() + " : " + b);
             _blossomdps[b] = new MyList<int>();
 
             while (bv != bb)
@@ -695,7 +702,8 @@ Console.WriteLine("queue size: " + _queue.Size() + "\n " + _queue.ToString());
 
         private static void AugmentBlossom(int b, int v)
         {
-            int t = v, p;
+            var t = v;
+            int p;
             while (_blossomparent[t] != b)
             {
                 t = _blossomparent[t];
@@ -744,7 +752,6 @@ Console.WriteLine("queue size: " + _queue.Size() + "\n " + _queue.ToString());
             }
             _blossomchilds[b] = lst1;
 
-
             var lst3 = Skip(_blossomdps[b], i);
             var lst4 = Take(_blossomdps[b], i);
             for (var ii = 0; ii < lst4.Size(); ii++)
@@ -763,10 +770,10 @@ Console.WriteLine("queue size: " + _queue.Size() + "\n " + _queue.ToString());
             {
                 var s = _blossomchilds[b][i];
                 _blossomparent[s] = -1;
-                if (s < _amountOfNodes && _dualvar[s] == 0)
-                {
+                if (s < _amountOfNodes)
+                    _inblossom[s] = s;
+                else if (endstage && _dualvar[s] == 0)
                     ExpandBlossom(s, endstage);
-                }
                 else
                 {
                     var vs = BlossomLeaves(s);
@@ -787,7 +794,6 @@ Console.WriteLine("queue size: " + _queue.Size() + "\n " + _queue.ToString());
                 if (Convert.ToBoolean(j & 1))
                 {
                     j -= _blossomchilds[b].Size();
-                    ;
                     jstep = 1;
                     endptrick = 0;
                 }
@@ -800,7 +806,7 @@ Console.WriteLine("queue size: " + _queue.Size() + "\n " + _queue.ToString());
                 while (j != 0)
                 {
                     _label[_endpoint[p ^ 1]] = 0;
-                    _label[_endpoint[_blossomdps[b][j - endptrick] ^ endptrick]] = 0;
+                    _label[_endpoint[_blossomdps[b][j - endptrick] ^ endptrick ^ 1]] = 0;
                     AssignLabel(_endpoint[p ^ 1], 2, p);
                     _allowedge[DivideAndFloor(_blossomdps[b][j - endptrick], 2)] = true; // row 391
                     j += jstep;
@@ -850,6 +856,70 @@ Console.WriteLine("queue size: " + _queue.Size() + "\n " + _queue.ToString());
             _blossombestedges[b] = new MyList<int>();
             _bestedge[b] = -1;
             _unusedblossoms.Add(b);
+        }
+
+        private static void VerifyOptimum()
+        {
+            var vdualoffset = 0;
+            for (int k = 0; k < _amountOfEdges; k++)
+            {
+                int i = _myEdges[k][0];
+                int j = _myEdges[k][1];
+                int wt = _myEdges[k][2];
+                int s = _dualvar[i] + _dualvar[j] - 2 * wt;
+                MyList<int> iblossoms, jblossoms;
+                iblossoms = new MyList<int>();
+                jblossoms = new MyList<int>();
+                iblossoms.Add(i);
+                jblossoms.Add(j);
+
+                while (_blossomparent[iblossoms[iblossoms.Size() - 1]] != -1)
+                    iblossoms.Add(_blossomparent[iblossoms[iblossoms.Size() - 1]]);
+                while (_blossomparent[jblossoms[jblossoms.Size() - 1]] != -1)
+                    jblossoms.Add(_blossomparent[jblossoms[jblossoms.Size() - 1]]);
+
+
+                iblossoms.Reverse();
+                jblossoms.Reverse();
+                //std::reverse(iblossoms.begin(), iblossoms.end());
+                //std::reverse(jblossoms.begin(), jblossoms.end());
+
+                for (int i1 = 0; i1 < Math.Min(iblossoms.Size(), jblossoms.Size()); i1++)
+                {
+                    int bi = iblossoms[i1];
+                    int bj = jblossoms[i1];
+                    if (bi != bj)
+                        break;
+                    s += 2 * _dualvar[bi];
+                }
+                if (s < 0)
+                    throw new Exception("Assert Error 553");
+                if (DivideAndFloor(_mate[i], 2) == k || DivideAndFloor(_mate[j], 2) == k)
+                {
+                    if (!(DivideAndFloor(_mate[i], 2) == k && DivideAndFloor(_mate[j], 2) == k))
+                        throw new Exception("Assert Error 555");
+                    if (s != 0)
+                        throw new Exception("Assert Error 556");
+                }
+            }
+            for (int v = 1; v < _amountOfNodes; v++)
+                if (!(_mate[v] >= 0 || _dualvar[v] + vdualoffset == 0)) throw new Exception("Assert Error");
+
+            for (int b = _amountOfNodes; b < 2 * _amountOfNodes; b++)
+            {
+                if (_blossombase[b] >= 0 && _dualvar[b] > 0)
+                {
+                    if (_blossomdps[b].Size() % 2 != 1) throw new Exception("Assert Error");
+                    /*for p in blossomendps[b][1::2]:
+                assert mate[endpoint[p]] == p ^ 1
+                assert mate[endpoint[p ^ 1]] == p*/
+                }
+            }
+        }
+
+        private static void print(object o)
+        {
+            Console.WriteLine(o);
         }
     }
 }
