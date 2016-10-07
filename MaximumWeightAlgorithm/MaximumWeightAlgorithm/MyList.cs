@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace MaximumWeightAlgorithm
@@ -15,6 +16,11 @@ namespace MaximumWeightAlgorithm
         public MyList(List<T> oldlist)
         {
             List = oldlist;
+        }
+
+        public MyList(MyList<T> oldlist)
+        {
+            List = oldlist.ToList();
         }
 
         public MyList()
