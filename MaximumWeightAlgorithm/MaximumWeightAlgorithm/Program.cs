@@ -12,7 +12,7 @@ namespace MaximumWeightAlgorithm
 
         static void Main(string[] args)
         {
-            var lines = System.IO.File.ReadAllLines(@"C:\users\ceesj\documents\Lines.txt");
+            var lines = System.IO.File.ReadAllLines(@"C:\Users\ceesj\Documents\Stage\Progetto coccosimeoni\ScaffoldingProject\C_Sharp_Version\Lines.txt");
             const char delimiter = ',';
             var edges =
                 lines.Select(line => line.Split(delimiter)).Select(splitline =>
