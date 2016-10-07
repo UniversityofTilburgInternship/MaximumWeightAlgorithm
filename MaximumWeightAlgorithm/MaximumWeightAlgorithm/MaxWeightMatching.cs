@@ -6,10 +6,10 @@ namespace MaximumWeightAlgorithm
 {
     public class MaxWeightMatching
     {
-        private static MyList<Edge> _myEdges = new MyList<Edge>();
+        private static MyList<BlossomEdge> _myEdges = new MyList<BlossomEdge>();
         private static int _amountOfEdges;
         private static int _amountOfNodes;
-        private static int _maxWeight;
+        private static float _maxWeight;
         private static List<int> _endpoint = new List<int>();
         private static List<List<int>> _neightbend = new List<List<int>>();
         private static MyList<int> _mate = new MyList<int>();
@@ -23,17 +23,17 @@ namespace MaximumWeightAlgorithm
         private static MyList<int> _bestedge = new MyList<int>();
         private static MyList<MyList<int>> _blossombestedges = new MyList<MyList<int>>();
         private static MyList<int> _unusedblossoms = new MyList<int>();
-        private static MyList<int> _dualvar = new MyList<int>();
+        private static MyList<float> _dualvar = new MyList<float>();
         private static MyList<bool> _allowedge = new MyList<bool>();
         private static MyList<int> _queue = new MyList<int>();
 
-        public static List<int> MaxWMatching(List<Edge> edges, bool maxCardinality = false)
+        public static List<int> MaxWMatching(MyList<BlossomEdge> edges, bool maxCardinality = false)
         {
             // if edges is empty
             if (edges.Count <= 0)
                 return _mate.ToList();
 
-            _myEdges = new MyList<Edge>(edges);
+            _myEdges = new MyList<BlossomEdge>(edges);
 
             // Count nodes
             _amountOfEdges = edges.Count;
@@ -41,22 +41,22 @@ namespace MaximumWeightAlgorithm
 
             foreach (var edge in edges)
             {
-                if (!(edge[0] >= 0 && edge[1] >= 0 && edge[0] != edge[1]))
+                if (!(edge.Start.Id >= 0 && edge.End.Id >= 0 && edge.Start != edge.End))
                     throw new Exception("Assert Error");
-                if (edge[0] >= _amountOfNodes) _amountOfNodes = edge[0] + 1;
-                if (edge[1] >= _amountOfNodes) _amountOfNodes = edge[1] + 1;
+                if (edge.Start.Id >= _amountOfNodes) _amountOfNodes = edge.Start.Id + 1;
+                if (edge.End.Id >= _amountOfNodes) _amountOfNodes = edge.End.Id + 1;
             }
             Console.WriteLine("Applying Edmonds Algorithm with {0} nodes transformed by Siloach reducer\n",
                 _amountOfNodes);
 
             for (var i = 0; i < _amountOfEdges; i++)
             {
-                _maxWeight = Math.Max(0, Math.Max(_maxWeight, edges[i][2]));
+                _maxWeight = Math.Max(0, Math.Max(_maxWeight, edges[i].Weight));
             }
 
             for (var i = 0; i < 2 * _amountOfEdges; i++)
             {
-                _endpoint.Add(edges[DivideAndFloor(i, 2)][i % 2]);
+                _endpoint.Add(edges[(int)Math.Floor((double)(i / 2))][i % 2].Id);
             }
 
             for (var i = 0; i < _amountOfNodes; i++)
@@ -66,11 +66,15 @@ namespace MaximumWeightAlgorithm
 
             for (var k = 0; k < _amountOfEdges; k++)
             {
+                Console.WriteLine("DIT IS K " + k);
                 var i = edges[k][0];
                 var j = edges[k][1];
+                Console.WriteLine("I IS " + i);
+                Console.WriteLine("J IS " + j);
 
-                _neightbend[i].Add(2 * k + 1);
-                _neightbend[j].Add(2 * k);
+
+                _neightbend[i.Id].Add(2 * k + 1);
+                _neightbend[j.Id].Add(2 * k);
             }
 
             for (var i = 0; i < _amountOfNodes; i++)
@@ -153,7 +157,7 @@ namespace MaximumWeightAlgorithm
                             var p = _neightbend[n][i];
                             var k = DivideAndFloor(p, 2);
                             var w = _endpoint[p];
-                            var kslack = 0;
+                            var kslack = 0.0f;
 
                             if (_inblossom[n] == _inblossom[w])
                                 continue;
@@ -235,7 +239,7 @@ namespace MaximumWeightAlgorithm
                         if (_blossomparent[b] == -1 && _label[b] == 1 && _bestedge[b] != -1)
                         {
                             var kslack = Slack(_bestedge[b]);
-                            var d = DivideAndFloor(kslack, 2);
+                            var d = (float)Math.Floor(kslack / 2);
                             if (deltatype == -1 || d < delta)
                             {
                                 delta = d;
@@ -293,14 +297,14 @@ namespace MaximumWeightAlgorithm
                         var i = _myEdges[deltaEdge][0];
                         var j = _myEdges[deltaEdge][1];
                         var wt = _myEdges[deltaEdge][2];
-                        if (_label[_inblossom[i]] == 0)
+                        if (_label[_inblossom[i.Id]] == 0)
                         {
                             var tmp = i;
                             i = j;
                             j = tmp;
                         }
-                        if (_label[_inblossom[i]] != 1) throw new Exception("Assert Error 295");
-                        _queue.Add(i);
+                        if (_label[_inblossom[i.Id]] != 1) throw new Exception("Assert Error 295");
+                        _queue.Add(i.Id);
                     }
                     else if (deltatype == 3)
                     {
@@ -308,8 +312,8 @@ namespace MaximumWeightAlgorithm
                         var i = _myEdges[deltaEdge][0];
                         var j = _myEdges[deltaEdge][1];
                         var wt = _myEdges[deltaEdge][2];
-                        if (_label[_inblossom[i]] != 1) throw new Exception("Assert error 304");
-                        _queue.Add(i);
+                        if (_label[_inblossom[i.Id]] != 1) throw new Exception("Assert error 304");
+                        _queue.Add(i.Id);
                     }
                     else if (deltatype == 4)
                         ExpandBlossom(deltaBlossom, false);
@@ -427,9 +431,9 @@ namespace MaximumWeightAlgorithm
             return list;
         }
 
-        private static int Slack(int k)
+        private static float Slack(int k)
         {
-            return _dualvar[_myEdges[k][0]] + _dualvar[_myEdges[k][1]] - 2 * _myEdges[k][2];
+            return _dualvar[_myEdges[k][0].Id] + _dualvar[_myEdges[k][1].Id] - 2 * _myEdges[k].Weight;
         }
 
 
@@ -477,9 +481,9 @@ namespace MaximumWeightAlgorithm
 
         private static void AddBlossom(int Base, int k)
         {
-            var v = _myEdges[k][0];
-            var w = _myEdges[k][1];
-            var weight = _myEdges[k][2];
+            var v = _myEdges[k][0].Id;
+            var w = _myEdges[k][1].Id;
+            var weight = _myEdges[k].Weight;
 
             var bb = _inblossom[Base];
             var bv = _inblossom[v];
@@ -592,13 +596,13 @@ namespace MaximumWeightAlgorithm
                         var j = _myEdges[kk][1];
                         var wt = _myEdges[kk][2];
 
-                        if (_inblossom[j] == b)
+                        if (_inblossom[j.Id] == b)
                         {
                             var tmp = ii;
                             ii = j;
                             j = tmp;
                         }
-                        var bj = _inblossom[j];
+                        var bj = _inblossom[j.Id];
                         if (bj != b && _label[bj] == 1 && (bestedgeto[bj] == -1 || Slack(kk) < Slack(bestedgeto[bj])))
                         {
                             bestedgeto[bj] = kk;
@@ -659,13 +663,13 @@ namespace MaximumWeightAlgorithm
         {
             var v = _myEdges[k][0];
             var w = _myEdges[k][1];
-            var wt = _myEdges[k][2];
+            var wt = _myEdges[k].Weight;
 
             var ss = new MyList<int>();
             var ps = new MyList<int>();
 
-            ss.Add(v);
-            ss.Add(w);
+            ss.Add(v.Id);
+            ss.Add(w.Id);
             ps.Add(2 * k + 1);
             ps.Add(2 * k);
 
@@ -861,12 +865,12 @@ namespace MaximumWeightAlgorithm
         private static void VerifyOptimum()
         {
             var vdualoffset = 0;
-            for (int k = 0; k < _amountOfEdges; k++)
+            for (var k = 0; k < _amountOfEdges; k++)
             {
-                int i = _myEdges[k][0];
-                int j = _myEdges[k][1];
-                int wt = _myEdges[k][2];
-                int s = _dualvar[i] + _dualvar[j] - 2 * wt;
+                var i = _myEdges[k][0].Id;
+                var j = _myEdges[k][1].Id;
+                var wt = _myEdges[k].Weight;
+                float s = _dualvar[i] + _dualvar[j] - 2 * wt;
                 MyList<int> iblossoms, jblossoms;
                 iblossoms = new MyList<int>();
                 jblossoms = new MyList<int>();

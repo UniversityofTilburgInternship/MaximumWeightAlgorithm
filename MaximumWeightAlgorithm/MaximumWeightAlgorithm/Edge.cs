@@ -1,46 +1,56 @@
-﻿using System.Collections.Generic;
-using System.Runtime.CompilerServices;
-using System.Runtime.Serialization.Formatters;
+﻿using System;
 
 namespace MaximumWeightAlgorithm
 {
     public class Edge
     {
-        private List<int> _elems;
+        public Node Start { get; set; }
 
-        public Edge(int start, int end, int weight)
+        public float Weight { get; set; }
+
+        public Node End { get; set; }
+
+        public Edge()
         {
-            _elems = new List<int>();
-            if (start == end)
+        }
+
+        public Edge(Node start, Node end, float weight)
+        {
+            if (start.Id == end.Id)
             {
-                _elems.Insert(0, start);
-                _elems.Insert(1, end);
-                _elems.Insert(2, weight);
+                Start = start;
+                End = end;
+                Weight = weight;
             }
-            if (start < end)
+            if (start.Id < end.Id)
             {
-                _elems.Insert(0, start);
-                _elems.Insert(1, end);
+                Start = start;
+                End = end;
             }
             else
             {
-                _elems.Insert(0, end);
-                _elems.Insert(1, start);
+                Start = end;
+                End = start;
             }
-            _elems.Insert(2, weight);
-
+            Weight = weight;
         }
 
-        public int this [int i] => _elems[i];
+
+        public Node this [int i]
+        {
+            get
+            {
+                if (i == 0)
+                    return Start;
+                if (i == 1)
+                    return End;
+                throw new Exception("index out of Range");
+            }
+        }
 
         public override string ToString()
         {
-            var result = "";
-            result += _elems[0] + "\t" + _elems[1] + "\t" + _elems[2];
-            return result;
+            return "(" + Start + "," + End + ")\t" + Weight ;
         }
-
-        //equivalent (start , end)
-        //equivalent (start, end , weight)
     }
 }

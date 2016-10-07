@@ -42,6 +42,8 @@ namespace MaximumWeightAlgorithm
             List.Reverse();
         }
 
+        public new int Count => List.Count;
+
         public List<T> ToList()
         {
             return List;
@@ -51,6 +53,7 @@ namespace MaximumWeightAlgorithm
         {
             return Enumerable.Repeat(default(T), capacity).ToList();
         }
+
 
         public T this[int i]
         {
