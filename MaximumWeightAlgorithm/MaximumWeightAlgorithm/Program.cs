@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Runtime.ConstrainedExecution;
 using System.Runtime.Remoting;
+using System.Runtime.Remoting.Channels;
 using System.Security.Cryptography.X509Certificates;
 
 namespace MaximumWeightAlgorithm
@@ -9,44 +12,46 @@ namespace MaximumWeightAlgorithm
     internal class Program
     {
         private static int _oldNodesCount = 0;
+        static Dictionary<int, Node> _nodesDict = new Dictionary<int, Node>();
+        static List<Edge> _edges = new List<Edge>();
 
         private static void Main(string[] args)
         {
-            var lines = System.IO.File.ReadAllLines(@"C:\Users\ceesj\Documents\Stage\Progetto coccosimeoni\ScaffoldingProject\C_Sharp_Version\Lines.txt");
+            var lines =
+                System.IO.File.ReadAllLines(
+                    @"C:\Users\ceesj\Documents\Stage\Progetto coccosimeoni\ScaffoldingProject\C_Sharp_Version\Lines.txt");
             const char delimiter = ',';
             var splittedLines = lines.Select(line => line.Split(delimiter)).ToList();
-            var nodes = new Dictionary<int, Node>();
-            var edges = new List<Edge>();
             foreach (var line in splittedLines)
             {
-                var startNodeInt = int.Parse(line[1]);
-                var endNodeInt = int.Parse(line[2]);
+                var startNodeInt = int.Parse(line[0]);
+                var endNodeInt = int.Parse(line[1]);
                 if (endNodeInt > startNodeInt)
                 {
                     var tmp = endNodeInt;
                     endNodeInt = startNodeInt;
                     startNodeInt = tmp;
                 }
-                if (!nodes.ContainsKey(startNodeInt))
-                    nodes.Add(startNodeInt, new Node(startNodeInt + "", startNodeInt ));
-                if (!nodes.ContainsKey(endNodeInt))
-                    nodes.Add(endNodeInt, new Node(endNodeInt + "", endNodeInt ));
-                var newEdge = new Edge(nodes[startNodeInt], nodes[endNodeInt], float.Parse(line[2]));
-                nodes[startNodeInt].AddNeighbour(nodes[endNodeInt]);
-                nodes[endNodeInt].AddNeighbour(nodes[startNodeInt]);
-                edges.Add(newEdge);
+                if (!_nodesDict.ContainsKey(startNodeInt))
+                    _nodesDict.Add(startNodeInt, new Node(startNodeInt + "", startNodeInt));
+                if (!_nodesDict.ContainsKey(endNodeInt))
+                    _nodesDict.Add(endNodeInt, new Node(endNodeInt + "", endNodeInt));
+                var newEdge = new Edge(_nodesDict[startNodeInt], _nodesDict[endNodeInt], float.Parse(line[2]));
+                _nodesDict[startNodeInt].AddEdge(newEdge);
+                _nodesDict[endNodeInt].AddEdge(newEdge);
+                _edges.Add(newEdge);
             }
 
-            edges.ForEach(Console.WriteLine);
-            foreach (var VARIABLE in nodes)
+            _edges.ForEach(Console.WriteLine);
+            Console.WriteLine("&&");
+            foreach (var VARIABLE in _nodesDict)
             {
                 Console.WriteLine(VARIABLE.Value);
             }
             //MaxWeightMatching.MaxWMatching(edges).ForEach(Console.WriteLine);
 
 
-            Console.WriteLine("***********************************");
-            var edges2 = new MyList<Edge>(edges);
+            var edges2 = new MyList<Edge>(_edges);
             var list = BlossomAlgorithm(edges2);
             for (var i = 0; i < list.Count; i++)
             {
@@ -101,85 +106,49 @@ namespace MaximumWeightAlgorithm
             return result;
         }
 
-        private static MyList<BlossomEdge> BlossomAlgorithm(MyList<Edge> edges)
+        private static List<BlossomEdge> BlossomAlgorithm(MyList<Edge> edges)
         {
-            var newList = new MyList<BlossomEdge>();
-            var nodes = new HashSet<int>();
-            for (var i = 0; i < edges.Size(); i++)
+            Console.WriteLine("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&");
+            var TransfromedEdges = new List<BlossomEdge>();
+            foreach (var node in _nodesDict)
             {
-                var edge = edges[i];
+                var travelNodes = new List<TravelNode>();
+                var connectorNodes = new List<ConnectorNode>();
+                for (var i = 0; i < node.Value.Degrees; i++)
+                {
+                    var travelNode = new TravelNode(node.Key + i + "", node.Key);
 
-                if (!nodes.Contains(edge.Start.Id))
-                    nodes.Add(edge.Start.Id);
-                if (!nodes.Contains(edge.End.Id))
-                    nodes.Add(edge.End.Id);
+                    var nodeTo = node.Value.getEdges()[i].End.Id == node.Value.Id
+                        ? node.Value.getEdges()[i].Start.Id
+                        : node.Value.getEdges()[i].End.Id;
+                    var connectorNode = new ConnectorNode(node.Key + "_" + i + "", nodeTo);
+
+                    travelNodes.Add(travelNode);
+                    connectorNodes.Add(connectorNode);
+                }
+                foreach (var travelNode in travelNodes)
+                {
+                    for (var j = 0; j < connectorNodes.Count; j++)
+                    {
+                        var connectorNode = _nodesDict[connectorNodes[j].Id];
+                        var connectorNodeEdges = connectorNode.getEdges();
+                        var nodeToConnect =
+                            connectorNodeEdges.Find(
+                                edge => edge.Start.Id == connectorNode.Id || edge.End.Id == connectorNode.Id);
+                        var blossomEdge = new BlossomEdge
+                        {
+                            Start = travelNode,
+                            End = connectorNodes[j],
+                            Weight = nodeToConnect.Weight,
+                            OldEdge = nodeToConnect
+                        };
+                        TransfromedEdges.Add(blossomEdge);
+                    }
+                }
             }
-            _oldNodesCount = nodes.Count;
-            var nodeCounter = nodes.Count * 2;
-
-            for (var i = 0; i < edges.Size(); i++)
-            {
-                var startNode = edges[i].Start;
-                var endNode = edges[i].End;
-                var min = ++nodeCounter;
-                var max = ++nodeCounter;
-                var MainblossomEdge = new BlossomEdge
-                {
-                    OldEdge = edges[i],
-                    Weight = edges[i].Weight,
-                    Start = new Node(min+ "",min),
-                    End =  new Node(max + "" , max)
-                };
-
-//                for (int j = 0; j < ; j++)
-//                {
-//
-//                }
 
 
-                var blossomEdge1 = new BlossomEdge
-                {
-                    OldEdge = edges[i],
-                    Weight = edges[i].Weight,
-                    Start = new Node(startNode.Id * 2 + "", startNode.Id * 2),
-                    End = new Node(min + "", min)
-                };
-//                var blossomEdge2 = new BlossomEdge
-//                {
-//                    OldEdge = edges[i],
-//                    Weight = edges[i].Weight,
-//                    Start = new Node(startNode.Id * 2 + 1 + "", startNode.Id * 2 + 1),
-//                    End = new Node(min + "", min)
-//                };
-                var blossomEdge3 = new BlossomEdge
-                {
-                    OldEdge = edges[i],
-                    Weight = edges[i].Weight,
-                    Start = new Node(endNode.Id * 2 + "", endNode.Id * 2),
-                    End = new Node(max + "", max)
-                };
-//                var blossomEdge4 = new BlossomEdge
-//                {
-//                    OldEdge = edges[i],
-//                    Weight = edges[i].Weight,
-//                    Start = new Node(endNode.Id * 2 + 1 + "", endNode.Id * 2 + 1),
-//                    End = new Node(max + "", max)
-//                };
-                var blossomEdge5 = new BlossomEdge
-                {
-                    OldEdge = edges[i],
-                    Weight = edges[i].Weight,
-                    Start = new Node(min + "", min),
-                    End = new Node(max + "", max)
-                };
-
-                newList.Add(blossomEdge1);
-                //newList.Add(blossomEdge2);
-                newList.Add(blossomEdge3);
-                //newList.Add(blossomEdge4);
-                newList.Add(blossomEdge5);
-            }
-            return newList;
+            return TransfromedEdges;
         }
 
 
@@ -192,24 +161,7 @@ namespace MaximumWeightAlgorithm
 
             for (var i = 0; i < edges.Size(); i++)
             {
-//                int weight = edges[i][2];
-//                int min = NodeCounter++;
-//                int max = NodeCounter++;
-//                int u = edges[i][0];
-//                int v = edges[i][1];
 //
-//                if (u > v)
-//                {
-//                    var tmp = u;
-//                    u = v;
-//                    v = tmp;
-//                }
-//
-//                TransformedGraph.Add(new Edge(u * 2, min, weight));
-//                TransformedGraph.Add(new Edge(u * 2 + 1, min, weight));
-//                TransformedGraph.Add(new Edge(v * 2, max, weight));
-//                TransformedGraph.Add(new Edge(v * 2 + 1, max, weight));
-//                TransformedGraph.Add(new Edge(min, max, weight));
             }
             Console.WriteLine(transformedGraph.Count);
             //TransformedGraph.ForEach(Console.WriteLine);

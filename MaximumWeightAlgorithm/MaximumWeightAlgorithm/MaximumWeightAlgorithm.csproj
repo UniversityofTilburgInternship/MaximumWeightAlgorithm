@@ -44,12 +44,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BlossomEdge.cs" />
+    <Compile Include="ConnectorNode.cs" />
     <Compile Include="Edge.cs" />
     <Compile Include="MaxWeightMatching.cs" />
     <Compile Include="MyList.cs" />
     <Compile Include="Node.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TravelNode.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
