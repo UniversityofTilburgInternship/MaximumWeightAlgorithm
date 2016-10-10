@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Runtime.ConstrainedExecution;
+using System.Runtime.InteropServices;
 using System.Runtime.Remoting;
 using System.Runtime.Remoting.Channels;
 using System.Security.Cryptography.X509Certificates;
@@ -47,7 +48,7 @@ namespace MaximumWeightAlgorithm
             Console.WriteLine("&&");
             foreach (var VARIABLE in _nodesDict)
             {
-                Console.WriteLine(VARIABLE.Value);
+                Console.WriteLine(VARIABLE.Value.Neighbours.Count);
             }
             //MaxWeightMatching.MaxWMatching(edges).ForEach(Console.WriteLine);
 
@@ -113,18 +114,20 @@ namespace MaximumWeightAlgorithm
             var transformedEdges = new List<BlossomEdge>();
             var connectorNodes = new List<ConnectorNode>();
 
-            foreach (var node in _nodesDict)
+            //keys start at 1
+            for (int i = 1; i <= _nodesDict.Count; i++)
             {
                 var temporaryConnectorNodes = new List<ConnectorNode>();
                 var travelNodes = new List<TravelNode>();
-                for (var i = 0; i < node.Value.Degrees; i++)
-                {
-                    var travelNode = new TravelNode(node.Key + i + "", node.Key);
+                var currentNode = _nodesDict[i];
 
-                    var nodeTo = node.Value.getEdges()[i].End.Id == node.Value.Id
-                        ? node.Value.getEdges()[i].Start.Id
-                        : node.Value.getEdges()[i].End.Id;
-                    var connectorNode = new ConnectorNode(node.Key + "_" + i + "", nodeTo, nodeTo);
+                for (var j = 0; j < currentNode.Degrees; j++)
+                {
+                    var travelNode = new TravelNode(currentNode.Id + j + "", currentNode.Id * 100 + j);
+                    var nodeTo = currentNode.getEdges()[j].End.Id == currentNode.Id
+                        ? currentNode.getEdges()[j].Start.Id
+                        : currentNode.getEdges()[j].End.Id;
+                    var connectorNode = new ConnectorNode(currentNode.Id + "_" + j + "", nodeTo* 1000 + j , nodeTo);
 
                     travelNodes.Add(travelNode);
                     temporaryConnectorNodes.Add(connectorNode);
@@ -134,11 +137,12 @@ namespace MaximumWeightAlgorithm
                 {
                     for (var j = 0; j < temporaryConnectorNodes.Count; j++)
                     {
-                        var connectorNode = _nodesDict[temporaryConnectorNodes[j].Id];
+                        var connectorNode = _nodesDict[temporaryConnectorNodes[j].Connetorid];
                         var connectorNodeEdges = connectorNode.getEdges();
                         var edgeBetweenNodes =
                             connectorNodeEdges.Find(
-                                edge => edge.Start.Id == connectorNode.Id || edge.End.Id == connectorNode.Id);
+                                edge => edge.Start.Id == currentNode.Id || edge.End.Id == currentNode.Id);
+
                         var blossomEdge = new BlossomEdge
                         {
                             Start = travelNode,

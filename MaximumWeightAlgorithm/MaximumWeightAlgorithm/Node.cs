@@ -5,11 +5,11 @@ namespace MaximumWeightAlgorithm
 {
     public class Node
     {
-        private List<Node> _neighbours;
+        public List<Node> Neighbours;
         private List<Edge> _edges;
         public Node(string name, int id)
         {
-            _neighbours = new List<Node>();
+            Neighbours = new List<Node>();
             _edges = new List<Edge>();
             Name = name;
             Id = id;
@@ -18,18 +18,18 @@ namespace MaximumWeightAlgorithm
         public Node()
         {
             _edges = new List<Edge>();
-            _neighbours = new List<Node>();
+            Neighbours = new List<Node>();
         }
 
         public string Name { get; set; }
 
         public int Id { get; set; }
 
-        public int Degrees => _neighbours.Count;
+        public int Degrees => Neighbours.Count;
 
         public List<Node> GetNeighbours()
         {
-            return _neighbours;
+            return Neighbours;
         }
 
         public void AddEdge(Edge edge)
@@ -45,11 +45,11 @@ namespace MaximumWeightAlgorithm
 
         public void AddNeighbour(Node neighbour)
         {
-            _neighbours.Add(neighbour);
+            Neighbours.Add(neighbour);
         }
         public override string ToString()
         {
-            var neighboursString = _neighbours.Aggregate("", (current, n) => current + (n.Id + ", "));
+            var neighboursString = Neighbours.Aggregate("", (current, n) => current + (n.Id + ", "));
             return Id + "\t"  + neighboursString;
         }
 
