@@ -6,23 +6,42 @@ using System.Security.Cryptography.X509Certificates;
 
 namespace MaximumWeightAlgorithm
 {
-    class Program
+    internal class Program
     {
         private static int _oldNodesCount = 0;
 
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             var lines = System.IO.File.ReadAllLines(@"C:\Users\ceesj\Documents\Stage\Progetto coccosimeoni\ScaffoldingProject\C_Sharp_Version\Lines.txt");
             const char delimiter = ',';
-            var edges =
-                lines.Select(line => line.Split(delimiter)).Select(splitline =>
-                    new Edge(new Node(int.Parse(splitline[0]) + "", int.Parse(splitline[0])),
-                        new Node(int.Parse(splitline[1]) + "", int.Parse(splitline[1])),
-                        float.Parse(splitline[2]))).ToList();
-
+            var splittedLines = lines.Select(line => line.Split(delimiter)).ToList();
+            var nodes = new Dictionary<int, Node>();
+            var edges = new List<Edge>();
+            foreach (var line in splittedLines)
+            {
+                var startNodeInt = int.Parse(line[1]);
+                var endNodeInt = int.Parse(line[2]);
+                if (endNodeInt > startNodeInt)
+                {
+                    var tmp = endNodeInt;
+                    endNodeInt = startNodeInt;
+                    startNodeInt = tmp;
+                }
+                if (!nodes.ContainsKey(startNodeInt))
+                    nodes.Add(startNodeInt, new Node(startNodeInt + "", startNodeInt ));
+                if (!nodes.ContainsKey(endNodeInt))
+                    nodes.Add(endNodeInt, new Node(endNodeInt + "", endNodeInt ));
+                var newEdge = new Edge(nodes[startNodeInt], nodes[endNodeInt], float.Parse(line[2]));
+                nodes[startNodeInt].AddNeighbour(nodes[endNodeInt]);
+                nodes[endNodeInt].AddNeighbour(nodes[startNodeInt]);
+                edges.Add(newEdge);
+            }
 
             edges.ForEach(Console.WriteLine);
-
+            foreach (var VARIABLE in nodes)
+            {
+                Console.WriteLine(VARIABLE.Value);
+            }
             //MaxWeightMatching.MaxWMatching(edges).ForEach(Console.WriteLine);
 
 
@@ -34,18 +53,18 @@ namespace MaximumWeightAlgorithm
                 Console.WriteLine(list[i]);
             }
             Console.WriteLine("***********************************");
-            var resultsMaxWeightMatching = MaxWeightMatching.MaxWMatching(list);
-            foreach (var t in resultsMaxWeightMatching )
-            {
-                Console.WriteLine(t);
-            }
-            Console.WriteLine("***********************************");
+//            var resultsMaxWeightMatching = MaxWeightMatching.MaxWMatching(list);
+//            foreach (var t in resultsMaxWeightMatching )
+//            {
+//                Console.WriteLine(t);
+//            }
+//            Console.WriteLine("***********************************");
 
-            var shrinked = ShrinkBack(resultsMaxWeightMatching);
-            foreach (var variable in shrinked)
-            {
-                Console.WriteLine(variable.Item1 + ", " + variable.Item2);
-            }
+//            var shrinked = ShrinkBack(resultsMaxWeightMatching);
+//            foreach (var variable in shrinked)
+//            {
+//                Console.WriteLine(variable.Item1 + ", " + variable.Item2);
+//            }
         }
 
         private static List<Tuple<int, int>> ShrinkBack(List<int> results)
@@ -104,6 +123,20 @@ namespace MaximumWeightAlgorithm
                 var endNode = edges[i].End;
                 var min = ++nodeCounter;
                 var max = ++nodeCounter;
+                var MainblossomEdge = new BlossomEdge
+                {
+                    OldEdge = edges[i],
+                    Weight = edges[i].Weight,
+                    Start = new Node(min+ "",min),
+                    End =  new Node(max + "" , max)
+                };
+
+//                for (int j = 0; j < ; j++)
+//                {
+//
+//                }
+
+
                 var blossomEdge1 = new BlossomEdge
                 {
                     OldEdge = edges[i],
@@ -111,13 +144,13 @@ namespace MaximumWeightAlgorithm
                     Start = new Node(startNode.Id * 2 + "", startNode.Id * 2),
                     End = new Node(min + "", min)
                 };
-                var blossomEdge2 = new BlossomEdge
-                {
-                    OldEdge = edges[i],
-                    Weight = edges[i].Weight,
-                    Start = new Node(startNode.Id * 2 + 1 + "", startNode.Id * 2 + 1),
-                    End = new Node(min + "", min)
-                };
+//                var blossomEdge2 = new BlossomEdge
+//                {
+//                    OldEdge = edges[i],
+//                    Weight = edges[i].Weight,
+//                    Start = new Node(startNode.Id * 2 + 1 + "", startNode.Id * 2 + 1),
+//                    End = new Node(min + "", min)
+//                };
                 var blossomEdge3 = new BlossomEdge
                 {
                     OldEdge = edges[i],
@@ -125,13 +158,13 @@ namespace MaximumWeightAlgorithm
                     Start = new Node(endNode.Id * 2 + "", endNode.Id * 2),
                     End = new Node(max + "", max)
                 };
-                var blossomEdge4 = new BlossomEdge
-                {
-                    OldEdge = edges[i],
-                    Weight = edges[i].Weight,
-                    Start = new Node(endNode.Id * 2 + 1 + "", endNode.Id * 2 + 1),
-                    End = new Node(max + "", max)
-                };
+//                var blossomEdge4 = new BlossomEdge
+//                {
+//                    OldEdge = edges[i],
+//                    Weight = edges[i].Weight,
+//                    Start = new Node(endNode.Id * 2 + 1 + "", endNode.Id * 2 + 1),
+//                    End = new Node(max + "", max)
+//                };
                 var blossomEdge5 = new BlossomEdge
                 {
                     OldEdge = edges[i],
@@ -141,9 +174,9 @@ namespace MaximumWeightAlgorithm
                 };
 
                 newList.Add(blossomEdge1);
-                newList.Add(blossomEdge2);
+                //newList.Add(blossomEdge2);
                 newList.Add(blossomEdge3);
-                newList.Add(blossomEdge4);
+                //newList.Add(blossomEdge4);
                 newList.Add(blossomEdge5);
             }
             return newList;

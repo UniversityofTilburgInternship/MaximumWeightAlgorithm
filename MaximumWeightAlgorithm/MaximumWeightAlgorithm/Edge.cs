@@ -50,7 +50,7 @@ namespace MaximumWeightAlgorithm
 
         public override string ToString()
         {
-            return "(" + Start + "," + End + ")\t" + Weight ;
+            return "(" + Start.Id + "," + End.Id + ")\t" + Weight ;
         }
     }
 }
