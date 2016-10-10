@@ -1,13 +1,7 @@
 ﻿using System;
+using System.CodeDom;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Globalization;
 using System.Linq;
-using System.Runtime.ConstrainedExecution;
-using System.Runtime.InteropServices;
-using System.Runtime.Remoting;
-using System.Runtime.Remoting.Channels;
-using System.Security.Cryptography.X509Certificates;
 
 namespace MaximumWeightAlgorithm
 {
@@ -16,6 +10,7 @@ namespace MaximumWeightAlgorithm
         private static int _oldNodesCount = 0;
         static Dictionary<int, Node> _nodesDict = new Dictionary<int, Node>();
         static List<Edge> _edges = new List<Edge>();
+        static HashSet<Edge> copiedEdges = new HashSet<Edge>();
 
         private static void Main(string[] args)
         {
@@ -28,7 +23,7 @@ namespace MaximumWeightAlgorithm
             {
                 var startNodeInt = int.Parse(line[0]);
                 var endNodeInt = int.Parse(line[1]);
-                if (endNodeInt > startNodeInt)
+                if (endNodeInt < startNodeInt)
                 {
                     var tmp = endNodeInt;
                     endNodeInt = startNodeInt;
@@ -44,11 +39,13 @@ namespace MaximumWeightAlgorithm
                 _edges.Add(newEdge);
             }
 
-            _edges.ForEach(Console.WriteLine);
+
+            //_edges.ForEach(Console.WriteLine);
             Console.WriteLine("&&");
             foreach (var VARIABLE in _nodesDict)
             {
-                Console.WriteLine(VARIABLE.Value.Neighbours.Count);
+
+                Console.WriteLine(VARIABLE.Value);
             }
             //MaxWeightMatching.MaxWMatching(edges).ForEach(Console.WriteLine);
 
@@ -113,7 +110,7 @@ namespace MaximumWeightAlgorithm
             Console.WriteLine("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&");
             var transformedEdges = new List<BlossomEdge>();
             var connectorNodes = new List<ConnectorNode>();
-
+            int x = 0;
             //keys start at 1
             for (int i = 1; i <= _nodesDict.Count; i++)
             {
@@ -123,11 +120,15 @@ namespace MaximumWeightAlgorithm
 
                 for (var j = 0; j < currentNode.Degrees; j++)
                 {
-                    var travelNode = new TravelNode(currentNode.Id + j + "", currentNode.Id * 100 + j);
+                    //var travelNode = new TravelNode(currentNode.Id + j + "", currentNode.Id * 100 + j);
+                    var travelNode = new TravelNode(currentNode.Id + j + "", x++);
+
                     var nodeTo = currentNode.getEdges()[j].End.Id == currentNode.Id
                         ? currentNode.getEdges()[j].Start.Id
                         : currentNode.getEdges()[j].End.Id;
-                    var connectorNode = new ConnectorNode(currentNode.Id + "_" + j + "", nodeTo* 1000 + j , nodeTo);
+                    //var connectorNode = new ConnectorNode(currentNode.Id + "_" + j + "", nodeTo* 1000 + j , nodeTo);
+                    var connectorNode = new ConnectorNode(currentNode.Id + "_" + j + "", x++, nodeTo, i);
+                    connectorNode.OldNode = currentNode;
 
                     travelNodes.Add(travelNode);
                     temporaryConnectorNodes.Add(connectorNode);
@@ -142,7 +143,6 @@ namespace MaximumWeightAlgorithm
                         var edgeBetweenNodes =
                             connectorNodeEdges.Find(
                                 edge => edge.Start.Id == currentNode.Id || edge.End.Id == currentNode.Id);
-
                         var blossomEdge = new BlossomEdge
                         {
                             Start = travelNode,
@@ -155,38 +155,50 @@ namespace MaximumWeightAlgorithm
                 }
                 temporaryConnectorNodes.ForEach(connectorNodes.Add);
             }
-
-            for (var i = 0; i < edges.Count; i++)
+            for (int i = 0; i < connectorNodes.Count; i++)
             {
-                var edge = edges[i];
-                var endnode = connectorNodes.Find(item => item.Connetorid == edge.End.Id);
-                var startnode = connectorNodes.Find(item => item.Connetorid == edge.Start.Id);
-                var blossomEdge = new BlossomEdge
+                for (int j = 0; j < connectorNodes.Count; j++)
                 {
-                    OldEdge = edge,
-                    Weight = edge.Weight,
-                    Start = startnode,
-                    End = endnode
-                };
-                transformedEdges.Add(blossomEdge);
+                    if (connectorNodes[i].Connetorid == connectorNodes[j].CurrentNode &&
+                        connectorNodes[j].Connetorid == connectorNodes[i].CurrentNode)
+                    {
+
+                        var startedges = connectorNodes[i].OldNode.getEdges();
+                        var endedges = connectorNodes[j].OldNode.getEdges();
+                        var edge = FindNotConnectedEdge(startedges, endedges);
+                        if (edge != null)
+                        {
+                            var blossomEdge = new BlossomEdge
+                            {
+                                Start = connectorNodes[i],
+                                End = connectorNodes[j],
+                                OldEdge = edge,
+                                Weight = edge.Weight
+                            };
+                            transformedEdges.Add(blossomEdge);
+                        }
+                    }
+                }
             }
             return transformedEdges;
         }
 
-
-        private static void Expand(int amountOfNodes, MyList<Edge> edges)
+        private static Edge FindNotConnectedEdge(List<Edge> node1edges, List<Edge> node2edges)
         {
-            var transformedGraph = new List<Edge>();
-            var nodeCounter = amountOfNodes * 2;
-            Console.WriteLine(amountOfNodes);
-            edges.ForEach(Console.WriteLine);
-
-            for (var i = 0; i < edges.Size(); i++)
+            var returnedge = new Edge();
+            for (int i = 0; i < node1edges.Count; i++)
             {
-//
+                for (int j = 0; j < node2edges.Count; j++)
+                {
+                    if (node1edges[i].Start == node2edges[j].Start && node1edges[i].End == node2edges[j].End)
+                        returnedge =  node1edges[i];
+
+                }
             }
-            Console.WriteLine(transformedGraph.Count);
-            //TransformedGraph.ForEach(Console.WriteLine);
+            if (copiedEdges.Contains(returnedge))
+                returnedge = null;
+            copiedEdges.Add(returnedge);
+            return returnedge;
         }
     }
 }

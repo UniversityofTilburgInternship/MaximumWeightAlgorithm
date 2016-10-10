@@ -6,7 +6,7 @@
 
         public override string ToString()
         {
-            return "BlossomEdge " +  base.ToString();
+            return "BlossomEdge "  + "(" + Start.Id + "," + End.Id + ")\t" + Weight  + "\t";
         }
     }
 }
