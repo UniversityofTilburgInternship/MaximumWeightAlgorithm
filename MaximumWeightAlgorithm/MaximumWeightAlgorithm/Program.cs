@@ -16,7 +16,7 @@ namespace MaximumWeightAlgorithm
         {
             var lines =
                 System.IO.File.ReadAllLines(
-                    @"C:\Users\ceesj\Documents\Stage\Progetto coccosimeoni\ScaffoldingProject\C_Sharp_Version\Lines.txt");
+                    @"E:\Hogeschool\Stage\maximumweightalgorithm\Lines.txt");
             const char delimiter = ',';
             var splittedLines = lines.Select(line => line.Split(delimiter)).ToList();
             foreach (var line in splittedLines)
@@ -110,62 +110,70 @@ namespace MaximumWeightAlgorithm
             Console.WriteLine("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&");
             var transformedEdges = new List<BlossomEdge>();
             var connectorNodes = new List<ConnectorNode>();
-            int x = 0;
+            int nodeIdIterator = 0;
+
             //keys start at 1
             for (int i = 1; i <= _nodesDict.Count; i++)
             {
                 var temporaryConnectorNodes = new List<ConnectorNode>();
                 var travelNodes = new List<TravelNode>();
-                var currentNode = _nodesDict[i];
+                var currentRealNode = _nodesDict[i];
 
-                for (var j = 0; j < currentNode.Degrees; j++)
+                //Creating travelnodes and connectornodes
+                for (var j = 0; j < currentRealNode.Degrees; j++)
                 {
                     //var travelNode = new TravelNode(currentNode.Id + j + "", currentNode.Id * 100 + j);
-                    var travelNode = new TravelNode(currentNode.Id + j + "", x++);
+                    var travelNode = new TravelNode(currentRealNode.Id + j + "", nodeIdIterator++);
 
-                    var nodeTo = currentNode.getEdges()[j].End.Id == currentNode.Id
-                        ? currentNode.getEdges()[j].Start.Id
-                        : currentNode.getEdges()[j].End.Id;
+                    var nodeTo = currentRealNode.getEdges()[j].End.Id == currentRealNode.Id
+                        ? currentRealNode.getEdges()[j].Start.Id
+                        : currentRealNode.getEdges()[j].End.Id;
                     //var connectorNode = new ConnectorNode(currentNode.Id + "_" + j + "", nodeTo* 1000 + j , nodeTo);
-                    var connectorNode = new ConnectorNode(currentNode.Id + "_" + j + "", x++, nodeTo, i);
-                    connectorNode.OldNode = currentNode;
+                    var connectorNode = new ConnectorNode(currentRealNode.Id + "_" + j + "", nodeIdIterator++, nodeTo, i);
+                    connectorNode.OldRealNode = currentRealNode;
 
                     travelNodes.Add(travelNode);
                     temporaryConnectorNodes.Add(connectorNode);
                 }
 
+                //connecting the travelnodes
                 foreach (var travelNode in travelNodes)
                 {
                     for (var j = 0; j < temporaryConnectorNodes.Count; j++)
                     {
-                        var connectorNode = _nodesDict[temporaryConnectorNodes[j].Connetorid];
+                        var connectorNode = _nodesDict[temporaryConnectorNodes[j].ConnectorId];
                         var connectorNodeEdges = connectorNode.getEdges();
-                        var edgeBetweenNodes =
+
+                        var edgeBetweenConnectorNodes =
                             connectorNodeEdges.Find(
-                                edge => edge.Start.Id == currentNode.Id || edge.End.Id == currentNode.Id);
+                                edge => edge.Start.Id == currentRealNode.Id || edge.End.Id == currentRealNode.Id);
+
                         var blossomEdge = new BlossomEdge
                         {
                             Start = travelNode,
                             End = temporaryConnectorNodes[j],
-                            Weight = edgeBetweenNodes.Weight,
-                            OldEdge = edgeBetweenNodes
+                            Weight = edgeBetweenConnectorNodes.Weight,
+                            OldEdge = edgeBetweenConnectorNodes
                         };
                         transformedEdges.Add(blossomEdge);
                     }
                 }
                 temporaryConnectorNodes.ForEach(connectorNodes.Add);
             }
+
+            //Connecting the connectorNodes (badum tss)
             for (int i = 0; i < connectorNodes.Count; i++)
             {
                 for (int j = 0; j < connectorNodes.Count; j++)
                 {
-                    if (connectorNodes[i].Connetorid == connectorNodes[j].CurrentNode &&
-                        connectorNodes[j].Connetorid == connectorNodes[i].CurrentNode)
+                    if (connectorNodes[i].ConnectorId == connectorNodes[j].CurrentNode &&
+                        connectorNodes[j].ConnectorId == connectorNodes[i].CurrentNode)
                     {
+                        var startEdges = connectorNodes[i].OldRealNode.getEdges();
+                        var endEdges = connectorNodes[j].OldRealNode.getEdges();
 
-                        var startedges = connectorNodes[i].OldNode.getEdges();
-                        var endedges = connectorNodes[j].OldNode.getEdges();
-                        var edge = FindNotConnectedEdge(startedges, endedges);
+                        var edge = FindNotConnectedEdge(startEdges, endEdges);
+
                         if (edge != null)
                         {
                             var blossomEdge = new BlossomEdge
@@ -183,20 +191,23 @@ namespace MaximumWeightAlgorithm
             return transformedEdges;
         }
 
+
         private static Edge FindNotConnectedEdge(List<Edge> node1edges, List<Edge> node2edges)
         {
             var returnedge = new Edge();
+
             for (int i = 0; i < node1edges.Count; i++)
             {
                 for (int j = 0; j < node2edges.Count; j++)
                 {
                     if (node1edges[i].Start == node2edges[j].Start && node1edges[i].End == node2edges[j].End)
                         returnedge =  node1edges[i];
-
                 }
             }
+
             if (copiedEdges.Contains(returnedge))
                 returnedge = null;
+
             copiedEdges.Add(returnedge);
             return returnedge;
         }

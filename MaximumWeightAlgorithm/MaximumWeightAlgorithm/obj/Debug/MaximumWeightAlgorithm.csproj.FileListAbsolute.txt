@@ -7,3 +7,10 @@ C:\Users\ceesj\Documents\Stage\Progetto coccosimeoni\ScaffoldingProject\C_Sharp_
 C:\Users\ceesj\Documents\Stage\Progetto coccosimeoni\ScaffoldingProject\C_Sharp_Version\MaximumWeightAlgorithm\MaximumWeightAlgorithm\bin\Debug\Microsoft.VisualStudio.QualityTools.UnitTestFramework.dll
 C:\Users\ceesj\Documents\Stage\Progetto coccosimeoni\ScaffoldingProject\C_Sharp_Version\MaximumWeightAlgorithm\MaximumWeightAlgorithm\bin\Debug\AIT.VisualStudio.TestTools.xml
 C:\Users\ceesj\Documents\Stage\Progetto coccosimeoni\ScaffoldingProject\C_Sharp_Version\MaximumWeightAlgorithm\MaximumWeightAlgorithm\bin\Debug\Microsoft.VisualStudio.QualityTools.UnitTestFramework.xml
+E:\Hogeschool\Stage\maximumweightalgorithm\MaximumWeightAlgorithm\MaximumWeightAlgorithm\obj\Debug\MaximumWeightAlgorithm.exe
+E:\Hogeschool\Stage\maximumweightalgorithm\MaximumWeightAlgorithm\MaximumWeightAlgorithm\obj\Debug\MaximumWeightAlgorithm.pdb
+E:\Hogeschool\Stage\maximumweightalgorithm\MaximumWeightAlgorithm\MaximumWeightAlgorithm\obj\Debug\MaximumWeightAlgorithm.csprojResolveAssemblyReference.cache
+E:\Hogeschool\Stage\maximumweightalgorithm\MaximumWeightAlgorithm\MaximumWeightAlgorithm\bin\Debug\MaximumWeightAlgorithm.exe
+E:\Hogeschool\Stage\maximumweightalgorithm\MaximumWeightAlgorithm\MaximumWeightAlgorithm\bin\Debug\MaximumWeightAlgorithm.pdb
+E:\Hogeschool\Stage\maximumweightalgorithm\MaximumWeightAlgorithm\MaximumWeightAlgorithm\bin\Debug\AIT.VisualStudio.TestTools.dll
+E:\Hogeschool\Stage\maximumweightalgorithm\MaximumWeightAlgorithm\MaximumWeightAlgorithm\bin\Debug\AIT.VisualStudio.TestTools.xml
