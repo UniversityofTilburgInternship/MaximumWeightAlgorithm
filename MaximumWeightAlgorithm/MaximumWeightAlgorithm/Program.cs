@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Runtime.ConstrainedExecution;
 using System.Runtime.Remoting;
@@ -109,11 +110,13 @@ namespace MaximumWeightAlgorithm
         private static List<BlossomEdge> BlossomAlgorithm(MyList<Edge> edges)
         {
             Console.WriteLine("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&");
-            var TransfromedEdges = new List<BlossomEdge>();
+            var transformedEdges = new List<BlossomEdge>();
+            var connectorNodes = new List<ConnectorNode>();
+
             foreach (var node in _nodesDict)
             {
+                var temporaryConnectorNodes = new List<ConnectorNode>();
                 var travelNodes = new List<TravelNode>();
-                var connectorNodes = new List<ConnectorNode>();
                 for (var i = 0; i < node.Value.Degrees; i++)
                 {
                     var travelNode = new TravelNode(node.Key + i + "", node.Key);
@@ -121,34 +124,49 @@ namespace MaximumWeightAlgorithm
                     var nodeTo = node.Value.getEdges()[i].End.Id == node.Value.Id
                         ? node.Value.getEdges()[i].Start.Id
                         : node.Value.getEdges()[i].End.Id;
-                    var connectorNode = new ConnectorNode(node.Key + "_" + i + "", nodeTo);
+                    var connectorNode = new ConnectorNode(node.Key + "_" + i + "", nodeTo, nodeTo);
 
                     travelNodes.Add(travelNode);
-                    connectorNodes.Add(connectorNode);
+                    temporaryConnectorNodes.Add(connectorNode);
                 }
+
                 foreach (var travelNode in travelNodes)
                 {
-                    for (var j = 0; j < connectorNodes.Count; j++)
+                    for (var j = 0; j < temporaryConnectorNodes.Count; j++)
                     {
-                        var connectorNode = _nodesDict[connectorNodes[j].Id];
+                        var connectorNode = _nodesDict[temporaryConnectorNodes[j].Id];
                         var connectorNodeEdges = connectorNode.getEdges();
-                        var nodeToConnect =
+                        var edgeBetweenNodes =
                             connectorNodeEdges.Find(
                                 edge => edge.Start.Id == connectorNode.Id || edge.End.Id == connectorNode.Id);
                         var blossomEdge = new BlossomEdge
                         {
                             Start = travelNode,
-                            End = connectorNodes[j],
-                            Weight = nodeToConnect.Weight,
-                            OldEdge = nodeToConnect
+                            End = temporaryConnectorNodes[j],
+                            Weight = edgeBetweenNodes.Weight,
+                            OldEdge = edgeBetweenNodes
                         };
-                        TransfromedEdges.Add(blossomEdge);
+                        transformedEdges.Add(blossomEdge);
                     }
                 }
+                temporaryConnectorNodes.ForEach(connectorNodes.Add);
             }
 
-
-            return TransfromedEdges;
+            for (var i = 0; i < edges.Count; i++)
+            {
+                var edge = edges[i];
+                var endnode = connectorNodes.Find(item => item.Connetorid == edge.End.Id);
+                var startnode = connectorNodes.Find(item => item.Connetorid == edge.Start.Id);
+                var blossomEdge = new BlossomEdge
+                {
+                    OldEdge = edge,
+                    Weight = edge.Weight,
+                    Start = startnode,
+                    End = endnode
+                };
+                transformedEdges.Add(blossomEdge);
+            }
+            return transformedEdges;
         }
 
 

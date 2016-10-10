@@ -2,8 +2,12 @@
 {
     public class ConnectorNode : Node
     {
-        public ConnectorNode(string name, int id) : base(name, id)
+        public int Connetorid { get; set; }
+
+        public ConnectorNode(string name, int id, int connetorid) : base(name, id)
         {
+            Connetorid = connetorid;
+
         }
     }
 }
