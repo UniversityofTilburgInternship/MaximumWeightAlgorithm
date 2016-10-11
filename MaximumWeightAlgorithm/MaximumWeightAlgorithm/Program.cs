@@ -1,5 +1,4 @@
 ﻿using System;
-using System.CodeDom;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -40,57 +39,34 @@ namespace MaximumWeightAlgorithm
                 _edges.Add(newEdge);
             }
 
-
             _edges.ForEach(Console.WriteLine);
             var blossomEdges = BlossomAlgorithm(new MyList<Edge>(_edges));
             blossomEdges.ForEach(Console.WriteLine);
             Console.WriteLine("***********************************");
-//            var resultsMaxWeightMatching = MaxWeightMatching.MaxWMatching(list);
-//            foreach (var t in resultsMaxWeightMatching )
+            var resultsMaxWeightMatching = MaxWeightMatching.MaxWMatching(new MyList<BlossomEdge>(blossomEdges));
+//            foreach (var node in resultsMaxWeightMatching)
 //            {
-//                Console.WriteLine(t);
+//                Console.WriteLine(node);
 //            }
-//            Console.WriteLine("***********************************");
 
-//            var shrinked = ShrinkBack(resultsMaxWeightMatching);
-//            foreach (var variable in shrinked)
-//            {
-//                Console.WriteLine(variable.Item1 + ", " + variable.Item2);
-//            }
+            var shrinked = ShrinkBack(resultsMaxWeightMatching, blossomEdges);
+            foreach (var variable in shrinked)
+            {
+                Console.WriteLine(variable);
+            }
         }
 
-        private static List<Tuple<int, int>> ShrinkBack(List<int> results)
+        private static HashSet<Edge> ShrinkBack(List<Node> results, List<BlossomEdge> edges)
         {
-            var alreadyVisited = new MyList<bool>(results.Count);
-            var result = new List<Tuple<int, int>>();
-
-            for (var i = 0; i < result.Count; i++)
+            var shrinkedBackEdges = new HashSet<Edge>();
+            for (var i = 0; i < results.Count; i = i + 2)
             {
-                alreadyVisited[i] = false;
+                var edgefound = edges.Find(item => item.End.Id == results[i].Id && item.Start.Id == results[i + 1].Id);
+                Console.WriteLine(edgefound);
+                if(!shrinkedBackEdges.Contains(edgefound))
+                    shrinkedBackEdges.Add(edgefound.OldEdge);
             }
-
-            for (var i = 0; i < _oldNodesCount; i++)
-            {
-                if (alreadyVisited[i])
-                    continue;
-                if (results[i] == -1)
-                    continue;
-                var v = Math.Min(i, results[i]);
-                var endpoint = Math.Max(results[i], i);
-                var otherEndPoint = endpoint % 2 == 0 ? endpoint + 1 : endpoint - 1;
-                if (results[otherEndPoint] == -1)
-                    continue;
-                var lastV = results[otherEndPoint];
-
-                alreadyVisited[i] = true;
-                alreadyVisited[results[i]] = true;
-                alreadyVisited[endpoint] = true;
-                alreadyVisited[otherEndPoint] = true;
-                alreadyVisited[lastV] = true;
-
-                result.Add(new Tuple<int, int>(v / 2, lastV / 2));
-            }
-            return result;
+            return shrinkedBackEdges;
         }
 
         private static List<BlossomEdge> BlossomAlgorithm(MyList<Edge> edges)
@@ -98,10 +74,10 @@ namespace MaximumWeightAlgorithm
             Console.WriteLine("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&");
             var transformedEdges = new List<BlossomEdge>();
             var connectorNodes = new List<ConnectorNode>();
-            int nodeIdIterator = 0;
+            var nodeIdIterator = 0;
 
             //keys start at 1
-            for (int i = 1; i <= _nodesDict.Count; i++)
+            for (var i = 1; i <= _nodesDict.Count; i++)
             {
                 var temporaryConnectorNodes = new List<ConnectorNode>();
                 var travelNodes = new List<TravelNode>();
@@ -118,7 +94,7 @@ namespace MaximumWeightAlgorithm
                         : currentRealNode.getEdges()[j].End.Id;
                     //var connectorNode = new ConnectorNode(currentNode.Id + "_" + j + "", nodeTo* 1000 + j , nodeTo);
                     var connectorNode = new ConnectorNode(currentRealNode.Id + "_" + j + "", nodeIdIterator++, nodeTo, i);
-                    connectorNode.OldNode= currentRealNode;
+                    connectorNode.OldNode = currentRealNode;
 
                     travelNodes.Add(travelNode);
                     temporaryConnectorNodes.Add(connectorNode);
@@ -189,7 +165,7 @@ namespace MaximumWeightAlgorithm
                 foreach (var edgeNodeB in edgesNodeB)
                 {
                     if (edgeNodeA.Start == edgeNodeB.Start && edgeNodeA.End == edgeNodeB.End)
-                        returnedge =  edgeNodeA;
+                        returnedge = edgeNodeA;
                 }
             }
 

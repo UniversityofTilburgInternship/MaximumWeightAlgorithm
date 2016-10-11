@@ -12,7 +12,7 @@ namespace MaximumWeightAlgorithm
         private static float _maxWeight;
         private static List<int> _endpoint = new List<int>();
         private static MyList<MyList<int>> _neightbend = new MyList<MyList<int>>();
-        private static MyList<int> _mate = new MyList<int>();
+        private static MyList<Node> _mate = new MyList<Node>();
         private static MyList<int> _label = new MyList<int>();
         private static MyList<int> _labelend = new MyList<int>();
         private static MyList<int> _inblossom = new MyList<int>();
@@ -27,14 +27,13 @@ namespace MaximumWeightAlgorithm
         private static MyList<bool> _allowedge = new MyList<bool>();
         private static MyList<int> _queue = new MyList<int>();
 
-        public static List<int> MaxWMatching(MyList<BlossomEdge> edges, bool maxCardinality = false)
+        public static List<Node> MaxWMatching(MyList<BlossomEdge> edges, bool maxCardinality = false)
         {
             // if edges is empty
             if (edges.Count <= 0)
                 return _mate.ToList();
 
             _myEdges = new MyList<BlossomEdge>(edges);
-            Console.WriteLine(_myEdges.Count + "BEGIN from" + edges.Count);
             // Count nodes
             _amountOfEdges = edges.Count;
             _amountOfNodes = 0;
@@ -78,7 +77,7 @@ namespace MaximumWeightAlgorithm
 
             for (var i = 0; i < _amountOfNodes; i++)
             {
-                _mate.Add(-1);
+                _mate.Add(new Node("-1", -1));
                 _inblossom.Add(i);
                 _blossombase.Add(i);
                 _bestedge.Add(-1);
@@ -137,7 +136,7 @@ namespace MaximumWeightAlgorithm
 
                 for (var n = 0; n < _amountOfNodes; n++)
                 {
-                    if (_mate[n] == -1 && _label[_inblossom[n]] == 0) AssignLabel(n, 1, -1);
+                    if (_mate[n].Id == -1 && _label[_inblossom[n]] == 0) AssignLabel(n, 1, -1);
                 }
                 var augmented = false;
 
@@ -329,12 +328,12 @@ namespace MaximumWeightAlgorithm
 
             for (var n = 0; n < _amountOfNodes; n++)
             {
-                if (_mate[n] >= 0)
-                    _mate[n] = _endpoint[_mate[n]];
+                if (_mate[n].Id >= 0)
+                    _mate[n] = new Node(_endpoint[_mate[n].Id] + "" , _endpoint[_mate[n].Id]);
             }
             for (var n = 0; n < _amountOfNodes; n++)
             {
-                if (!(_mate[n] == -1 || _mate[_mate[n]] == n)) throw new Exception("Asser error");
+                if (!(_mate[n].Id == -1 || _mate[_mate[n].Id].Id == n)) throw new Exception("Asser error");
             }
             Console.WriteLine();
             Console.WriteLine("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&");
@@ -401,8 +400,8 @@ namespace MaximumWeightAlgorithm
                     break;
                 case 2:
                     var Base = _blossombase[b];
-                    if (!(_mate[Base] >= 0)) throw new Exception("Assert Error");
-                    AssignLabel(_endpoint[_mate[Base]], 1, _mate[Base] ^ 1);
+                    if (!(_mate[Base].Id >= 0)) throw new Exception("Assert Error");
+                    AssignLabel(_endpoint[_mate[Base].Id], 1, _mate[Base].Id ^ 1);
                     break;
             }
         }
@@ -452,7 +451,7 @@ namespace MaximumWeightAlgorithm
                 path.Add(b);
                 _label[b] = 5;
 
-                if (_labelend[b] != _mate[_blossombase[b]]) throw new Exception("Assert Error");
+                if (_labelend[b] != _mate[_blossombase[b]].Id) throw new Exception("Assert Error");
 
                 if (_labelend[b] == -1)
                     v = -1;
@@ -506,7 +505,7 @@ namespace MaximumWeightAlgorithm
                 _blossomchilds[b].Add(bv);
                 _blossomdps[b].Add(_labelend[bv]);
 
-                if (!(_label[bv] == 2 || _label[bv] == 1 && _labelend[bv] == _mate[_blossombase[bv]]))
+                if (!(_label[bv] == 2 || _label[bv] == 1 && _labelend[bv] == _mate[_blossombase[bv]].Id))
                     throw new Exception("Assert Error");
                 if (_labelend[bv] < 0) throw new Exception("Assert Error");
 
@@ -528,7 +527,7 @@ namespace MaximumWeightAlgorithm
                 _blossomchilds[b].Add(bw);
                 _blossomdps[b].Add(_labelend[bw] ^ 1);
 
-                if (!(_label[bw] == 2 || _label[bw] == 1 && _labelend[bw] == _mate[_blossombase[bw]]))
+                if (!(_label[bw] == 2 || _label[bw] == 1 && _labelend[bw] == _mate[_blossombase[bw]].Id))
                     throw new Exception("Assert Error");
                 if (_labelend[bw] < 0) throw new Exception("Assert Error row 306");
 
@@ -680,11 +679,11 @@ namespace MaximumWeightAlgorithm
                 {
                     var bs = _inblossom[s];
                     if (_label[bs] != 1) throw new Exception("Assert Error");
-                    if (_labelend[bs] != _mate[_blossombase[bs]]) throw new Exception("Assert Error");
+                    if (_labelend[bs] != _mate[_blossombase[bs]].Id) throw new Exception("Assert Error");
 
                     if (bs >= _amountOfNodes)
                         AugmentBlossom(bs, s);
-                    _mate[s] = p;
+                    _mate[s] = new Node(p + "", p);
                     if (_labelend[bs] == -1)
                         break;
 
@@ -697,7 +696,7 @@ namespace MaximumWeightAlgorithm
                     if (_blossombase[bt] != t) throw new Exception("Assert Error");
                     if (bt >= _amountOfNodes)
                         AugmentBlossom(bt, j);
-                    _mate[j] = _labelend[bt];
+                    _mate[j] = new Node(_labelend[bt] + "" , _labelend[bt]);
                     p = _labelend[bt] ^ 1;
                 }
             }
@@ -744,8 +743,8 @@ namespace MaximumWeightAlgorithm
                 {
                     AugmentBlossom(t, _endpoint[p ^ 1]);
                 }
-                _mate[_endpoint[p]] = p ^ 1;
-                _mate[_endpoint[p ^ 1]] = p;
+                _mate[_endpoint[p]] = new Node((p ^ 1) + "", p ^ 1);
+                _mate[_endpoint[p ^ 1]] = new Node(p+ "", p);
             }
             var lst1 = Skip(_blossomchilds[b], i);
             var lst2 = Take(_blossomchilds[b], i);
@@ -844,7 +843,7 @@ namespace MaximumWeightAlgorithm
                         if (_label[v] != 2) throw new Exception("Assert Error");
                         if (_inblossom[v] != bv) throw new Exception("Assert Error");
                         _label[v] = 0;
-                        _label[_endpoint[_mate[_blossombase[bv]]]] = 0;
+                        _label[_endpoint[_mate[_blossombase[bv]].Id]] = 0;
                         AssignLabel(v, 2, _labelend[v]);
                     }
                     j += jstep;
@@ -897,16 +896,16 @@ namespace MaximumWeightAlgorithm
                 }
                 if (s < 0)
                     throw new Exception("Assert Error 553");
-                if (DivideAndFloor(_mate[i], 2) == k || DivideAndFloor(_mate[j], 2) == k)
+                if (DivideAndFloor(_mate[i].Id, 2) == k || DivideAndFloor(_mate[j].Id, 2) == k)
                 {
-                    if (!(DivideAndFloor(_mate[i], 2) == k && DivideAndFloor(_mate[j], 2) == k))
+                    if (!(DivideAndFloor(_mate[i].Id, 2) == k && DivideAndFloor(_mate[j].Id, 2) == k))
                         throw new Exception("Assert Error 555");
                     if (s != 0)
                         throw new Exception("Assert Error 556");
                 }
             }
             for (int v = 1; v < _amountOfNodes; v++)
-                if (!(_mate[v] >= 0 || _dualvar[v] + vdualoffset == 0)) throw new Exception("Assert Error");
+                if (!(_mate[v].Id>= 0 || _dualvar[v] + vdualoffset == 0)) throw new Exception("Assert Error");
 
             for (int b = _amountOfNodes; b < 2 * _amountOfNodes; b++)
             {
