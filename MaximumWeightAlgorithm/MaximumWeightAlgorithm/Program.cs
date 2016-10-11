@@ -41,22 +41,9 @@ namespace MaximumWeightAlgorithm
             }
 
 
-            //_edges.ForEach(Console.WriteLine);
-            Console.WriteLine("&&");
-            foreach (var VARIABLE in _nodesDict)
-            {
-
-                Console.WriteLine(VARIABLE.Value);
-            }
-            //MaxWeightMatching.MaxWMatching(edges).ForEach(Console.WriteLine);
-
-
-            var edges2 = new MyList<Edge>(_edges);
-            var list = BlossomAlgorithm(edges2);
-            for (var i = 0; i < list.Count; i++)
-            {
-                Console.WriteLine(list[i]);
-            }
+            _edges.ForEach(Console.WriteLine);
+            var blossomEdges = BlossomAlgorithm(new MyList<Edge>(_edges));
+            blossomEdges.ForEach(Console.WriteLine);
             Console.WriteLine("***********************************");
 //            var resultsMaxWeightMatching = MaxWeightMatching.MaxWMatching(list);
 //            foreach (var t in resultsMaxWeightMatching )
