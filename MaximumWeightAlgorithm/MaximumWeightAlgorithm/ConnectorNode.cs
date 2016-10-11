@@ -6,7 +6,7 @@ namespace MaximumWeightAlgorithm
     {
         public int ConnectorId { get; set; }
         public int CurrentNode { get; set; }
-        public Node OldRealNode { get; set; }
+        public Node OldNode { get; set; }
 
         public ConnectorNode(string name, int id, int connetorid, int currentNode) : base(name, id)
         {

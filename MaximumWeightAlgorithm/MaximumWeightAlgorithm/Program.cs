@@ -16,7 +16,7 @@ namespace MaximumWeightAlgorithm
         {
             var lines =
                 System.IO.File.ReadAllLines(
-                    @"E:\Hogeschool\Stage\maximumweightalgorithm\Lines.txt");
+                    UserFiles.CeesJan);
             const char delimiter = ',';
             var splittedLines = lines.Select(line => line.Split(delimiter)).ToList();
             foreach (var line in splittedLines)
@@ -130,7 +130,7 @@ namespace MaximumWeightAlgorithm
                         : currentRealNode.getEdges()[j].End.Id;
                     //var connectorNode = new ConnectorNode(currentNode.Id + "_" + j + "", nodeTo* 1000 + j , nodeTo);
                     var connectorNode = new ConnectorNode(currentRealNode.Id + "_" + j + "", nodeIdIterator++, nodeTo, i);
-                    connectorNode.OldRealNode = currentRealNode;
+                    connectorNode.OldNode= currentRealNode;
 
                     travelNodes.Add(travelNode);
                     temporaryConnectorNodes.Add(connectorNode);
@@ -169,8 +169,8 @@ namespace MaximumWeightAlgorithm
                     if (connectorNodes[i].ConnectorId == connectorNodes[j].CurrentNode &&
                         connectorNodes[j].ConnectorId == connectorNodes[i].CurrentNode)
                     {
-                        var startEdges = connectorNodes[i].OldRealNode.getEdges();
-                        var endEdges = connectorNodes[j].OldRealNode.getEdges();
+                        var startEdges = connectorNodes[i].OldNode.getEdges();
+                        var endEdges = connectorNodes[j].OldNode.getEdges();
 
                         var edge = FindNotConnectedEdge(startEdges, endEdges);
 
@@ -192,16 +192,16 @@ namespace MaximumWeightAlgorithm
         }
 
 
-        private static Edge FindNotConnectedEdge(List<Edge> node1edges, List<Edge> node2edges)
+        private static Edge FindNotConnectedEdge(List<Edge> edgesNodeA, List<Edge> edgesNodeB)
         {
             var returnedge = new Edge();
 
-            for (int i = 0; i < node1edges.Count; i++)
+            foreach (var edgeNodeA in edgesNodeA)
             {
-                for (int j = 0; j < node2edges.Count; j++)
+                foreach (var edgeNodeB in edgesNodeB)
                 {
-                    if (node1edges[i].Start == node2edges[j].Start && node1edges[i].End == node2edges[j].End)
-                        returnedge =  node1edges[i];
+                    if (edgeNodeA.Start == edgeNodeB.Start && edgeNodeA.End == edgeNodeB.End)
+                        returnedge =  edgeNodeA;
                 }
             }
 
