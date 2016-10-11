@@ -21,6 +21,7 @@ namespace MaximumWeightAlgorithm
             var splittedLines = lines.Select(line => line.Split(delimiter)).ToList();
             foreach (var line in splittedLines)
             {
+                if (line[0].Equals("") || line[1].Equals("") || line[2].Equals("")) continue;
                 var startNodeInt = int.Parse(line[0]);
                 var endNodeInt = int.Parse(line[1]);
                 if (endNodeInt < startNodeInt)
