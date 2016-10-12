@@ -6,6 +6,7 @@ namespace MaximumWeightAlgorithm
     public class Node
     {
         public List<Node> Neighbours;
+        public GenericVector PersonalityValues;
         private List<Edge> _edges;
         public Node(string name, int id)
         {

@@ -47,8 +47,8 @@ namespace MaximumWeightAlgorithm
                 if (edge.End.Id >= _amountOfNodes) _amountOfNodes = edge.End.Id + 1;
             }
 
-            Console.WriteLine("Applying Edmonds Algorithm with {0} nodes transformed by Siloach reducer\n",
-                _amountOfNodes);
+            Console.WriteLine("Applying Edmonds Algorithm with {0} nodes connected with {1} edges transformed by Siloach reducer\n",
+                _amountOfNodes, _amountOfEdges);
 
             for (var i = 0; i < _amountOfEdges; i++)
             {
@@ -57,10 +57,9 @@ namespace MaximumWeightAlgorithm
 
             for (var i = 0; i < 2 * _amountOfEdges; i++)
             {
-                _endpoint.Add(edges[(int)Math.Floor((double)(i / 2))][i % 2].Id);
+                _endpoint.Add(edges[(int) Math.Floor((double) (i / 2))][i % 2].Id);
             }
 
-            Console.WriteLine("62 : " + _amountOfNodes);
             for (var i = 0; i < _amountOfNodes; i++)
             {
                 _neightbend.Add(new MyList<int>());
@@ -136,7 +135,8 @@ namespace MaximumWeightAlgorithm
 
                 for (var n = 0; n < _amountOfNodes; n++)
                 {
-                    if (_mate[n].Id == -1 && _label[_inblossom[n]] == 0) AssignLabel(n, 1, -1);
+                    if (_mate[n].Id == -1 && _label[_inblossom[n]] == 0)
+                        AssignLabel(n, 1, -1);
                 }
                 var augmented = false;
 
@@ -217,7 +217,6 @@ namespace MaximumWeightAlgorithm
                     var delta = min;
 
 
-
                     for (var n = 0; n < _amountOfNodes; n++)
                     {
                         if (_label[_inblossom[n]] == 0 && _bestedge[n] != -1)
@@ -237,7 +236,7 @@ namespace MaximumWeightAlgorithm
                         if (_blossomparent[b] == -1 && _label[b] == 1 && _bestedge[b] != -1)
                         {
                             var kslack = Slack(_bestedge[b]);
-                            var d = (float)Math.Floor(kslack / 2);
+                            var d = (float) Math.Floor(kslack / 2);
                             if (deltatype == -1 || d < delta)
                             {
                                 delta = d;
@@ -324,12 +323,12 @@ namespace MaximumWeightAlgorithm
                         ExpandBlossom(b, true);
                 }
             }
-            VerifyOptimum();
+            //VerifyOptimum();
 
             for (var n = 0; n < _amountOfNodes; n++)
             {
                 if (_mate[n].Id >= 0)
-                    _mate[n] = new Node(_endpoint[_mate[n].Id] + "" , _endpoint[_mate[n].Id]);
+                    _mate[n] = new Node(_endpoint[_mate[n].Id] + "", _endpoint[_mate[n].Id]);
             }
             for (var n = 0; n < _amountOfNodes; n++)
             {
@@ -415,14 +414,16 @@ namespace MaximumWeightAlgorithm
             }
             else
             {
-                for (var i = 0; i < _blossomchilds[b].Count; i++)
+                foreach (var t in _blossomchilds[b])
                 {
-                    var t = _blossomchilds[b][i];
-                    if (t < _amountOfNodes) list.Add(t);
+                    if (t < _amountOfNodes)
+                        list.Add(t);
                     else
                     {
-                        var vs = BlossemLeaves(t);
-                        list.AddRange(vs.Select(t1 => vs[i]));
+                        foreach (var v in BlossomLeaves(t))
+                        {
+                            list.Add(v);
+                        }
                     }
                 }
             }
@@ -696,7 +697,7 @@ namespace MaximumWeightAlgorithm
                     if (_blossombase[bt] != t) throw new Exception("Assert Error");
                     if (bt >= _amountOfNodes)
                         AugmentBlossom(bt, j);
-                    _mate[j] = new Node(_labelend[bt] + "" , _labelend[bt]);
+                    _mate[j] = new Node(_labelend[bt] + "", _labelend[bt]);
                     p = _labelend[bt] ^ 1;
                 }
             }
@@ -744,7 +745,7 @@ namespace MaximumWeightAlgorithm
                     AugmentBlossom(t, _endpoint[p ^ 1]);
                 }
                 _mate[_endpoint[p]] = new Node((p ^ 1) + "", p ^ 1);
-                _mate[_endpoint[p ^ 1]] = new Node(p+ "", p);
+                _mate[_endpoint[p ^ 1]] = new Node(p + "", p);
             }
             var lst1 = Skip(_blossomchilds[b], i);
             var lst2 = Take(_blossomchilds[b], i);
@@ -905,7 +906,7 @@ namespace MaximumWeightAlgorithm
                 }
             }
             for (int v = 1; v < _amountOfNodes; v++)
-                if (!(_mate[v].Id>= 0 || _dualvar[v] + vdualoffset == 0)) throw new Exception("Assert Error");
+                if (!(_mate[v].Id >= 0 || _dualvar[v] + vdualoffset == 0)) throw new Exception("Assert Error");
 
             for (int b = _amountOfNodes; b < 2 * _amountOfNodes; b++)
             {

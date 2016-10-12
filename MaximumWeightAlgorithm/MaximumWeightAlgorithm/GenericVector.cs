@@ -1,0 +1,103 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+
+public class GenericVector
+{
+  //list of floats that's creating the GenericVector
+  public List<float> Points = new List<float>();
+
+  //CONSTRUCTORS
+  //Creates a new GenericVector with the points given
+  public GenericVector(List<float> points)
+  {
+    Points = points;
+  }
+
+  //Creates a new GeneriVector with the points as long as the size given
+  public GenericVector(int size)
+  {
+    for (var i = 0; i < size; i++)
+    {
+      Points.Add(0);
+    }
+  }
+
+  public GenericVector() { }
+
+  //GenericVector METHODS
+
+  //add an new float to points
+  public void Add(float point)
+  {
+    Points.Add(point);
+  }
+
+  //returns the amount of the points
+  public int Size => Points.Count;
+
+    //adds another GenericVector to the current instance of this GenericVector
+  public void Sum(GenericVector vectorToSum)
+  {
+    if (Size != vectorToSum.Size)
+      throw new Exception("GenericVector size of vectorToSum not equal to instance vector size");
+
+    for (var i = 0; i < Points.Count; i++)
+    {
+      Points[i] = (Points[i] + vectorToSum.Points[i]);
+    }
+  }
+
+  //Returns the length of the Vector
+  public double VectorLength()
+  {
+    return (float)Math.Sqrt(Points.Sum(item => Math.Pow(item, 2)));
+  }
+
+  //Override ToString-Method to show the content of the GenericVector
+  public override string ToString()
+  {
+    return string.Join("\n", Points.Select(x => x.ToString()).ToArray());
+  }
+
+
+  //STATIC GENERICVECTOR METHODS
+
+  //Returns the dotProcut of the two given GenericVectors
+  public static float DotProduct(GenericVector vectorA, GenericVector vectorB)
+  {
+    if (vectorA.Size != vectorB.Size)
+      throw new Exception("GenericVector a size of dotProduct not equal to GenericVector b size");
+    var aTimesBpoints = new List<float>();
+    for (int i = 0; i < vectorA.Points.Count; i++)
+    {
+      aTimesBpoints.Add(vectorA.Points[i] * vectorB.Points[i]);
+    }
+    //sums the product of the points
+    return aTimesBpoints.Sum();
+  }
+
+  //Returns the angle between the two GenericVectors
+  public static float GetAngle(GenericVector a, GenericVector b)
+  {
+    var x = DotProduct(a, b) / (a.VectorLength() * b.VectorLength());
+    if (x > 1 || x < -1)
+      return 0;
+    return (float)Math.Acos(x);
+  }
+
+  //Returns the distance between the two given GenericVectors
+  public static double Distance(GenericVector a, GenericVector b)
+  {
+    //Substract every point in b from
+    var aMinusBpoints = new List<float>();
+    for (int i = 0; i < a.Points.Count; i++)
+    {
+      aMinusBpoints.Add(a.Points[i] - b.Points[i]);
+    }
+    //Sum every powed point
+    return aMinusBpoints.Sum(item => Math.Pow(item, 2));
+  }
+
+}
+                             
